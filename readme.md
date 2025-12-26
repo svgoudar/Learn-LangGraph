@@ -1,7 +1,3 @@
-Below is a **production-grade, exhaustive concept inventory of LangGraph**, organized for **system design, implementation, and operations**.
-
----
-
 ## **LangGraph — Complete Concept Inventory**
 
 ---
