@@ -1,0 +1,2125 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Immutable State Transitions &#8212; Machine Learning Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-examples.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../_static/tabs.js"></script>
+    <script src="../../_static/js/hoverxref.js"></script>
+    <script src="../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../_static/js/micromodal.min.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"tex": {"macros": {"N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'langgraph/2-state-data-management/06-immutable-state-transitions';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="State Versioning in LangGraph" href="07-state-versioning.html" />
+    <link rel="prev" title="Partial State Updates in LangGraph" href="05-partial-state-updates.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Machine Learning Handbook - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Machine Learning Handbook - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    LangGraph Tutorial
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../1-graph-execution-model/overview.html">Graph Execution Model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/00-intr.html">LangGraph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/01-graph.html">Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/02-directed-graph.html">Directed Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/03-state-machine.html">State Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/04-cyclic-graph.html">Cyclic Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/05-conditional-graph.html">Conditional Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/06-dynamic-graph.html">Dynamic Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/07-deterministic-execution.html">Deterministic Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/08-non-deterministic-execution.html">Non-Deterministic Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/09-entry-node.html">Entry Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/10-exit-node.html">Exit Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/11-terminal-node.html">Terminal Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/12-start-symbol.html">Start Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/13-end-symbol.html">END Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/14-compilation.html">Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/15-execution-plan.html">Execution Plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/16-execution-engine.html">Execution Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/17-step-scheduler.html">Step Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/18-task-scheduler.html">Task Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/19-execution-context.html">Execution Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/20-execution-thread.html"><strong>Execution Thread in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/21-execution-run.html"><strong>Execution Run in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/22-thread-id.html">Thread ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/23-session.html">Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/24-run-id.html">Run ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/25-invocation.html">Invocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/26-resume.html">Resume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/27-interrupt.html">Interrupt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/28-cancel.html">Cancel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/29-timeout.html">Timeout</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">State &amp; Data Management</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00-global-state.html">Global State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01-local-node-state.html"><strong>Local Node State in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-typed-state-schema.html">Typed State Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-state-validation.html">State Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-state-reducers.html"><strong>State Reducers in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-partial-state-updates.html"><strong>Partial State Updates in LangGraph</strong></a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Immutable State Transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07-state-versioning.html"><strong>State Versioning in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="08-state-diff.html">State Diff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09-state-persistence.html">State Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10-state-serialization.html">State Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11-state-deserialization.html">State Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12-state-checkpoint.html"><strong>State Checkpointing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="13-snapshot.html"><strong>Snapshot in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="14-replay.html"><strong>Replay in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="15-rollback.html"><strong>Rollback in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="16-state-migration.html"><strong>State Migration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="17-state-recovery.html">State Recovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18-thread-persistence.html">Thread Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19-memory-store.html"><strong>Memory Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="20-short-term-memory.html">Short-Term Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="21-long-term-memory.html"><strong>Long-Term Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="22-external-memory.html"><strong>External Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="23-conversation-state.html"><strong>Conversation State in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="24-tool-state.html">Tool State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="25-metadata-state.html"><strong>Metadata State in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../3-nodes/overview.html">Nodes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/00-node.html">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/01-node-handler.html"><strong>Node Handler in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/02-node-executor.html"><strong>Node Executor in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/03-llm-node.html"><strong>LLM Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/04-tool-node.html"><strong>Tool Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/05-function-node.html"><strong>Function Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/06-router-node.html"><strong>Router Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/07-conditional-node.html"><strong>Conditional Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/08-human-node.html"><strong>Human Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/09-approval-node.html"><strong>Approval Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/10-review-node.html"><strong>Review Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/11-agent-node.html"><strong>Agent Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/12-subgraph-node.html"><strong>Subgraph Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/13-composite-node.html">Composite Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/14-async-node.html">Async Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/15-streaming-node.html"><strong>Streaming Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/16-batch-node.html"><strong>Batch Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/17-fallback-node.html"><strong>Fallback Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/18-error-node.html"><strong>Error Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/19-retry-node.html"><strong>Retry Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/20-timeout-node.html"><strong>Timeout Node in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../4-edges-control-flow/overview.html">Edges &amp; Control Flow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/00-edge.html">Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/01-conditional-edge.html">Conditional Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/02-dynamic-edge.html"><strong>Dynamic Edge in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/03-static-edge.html">Static Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/04-cyclic-edge.html"><strong>Demonstration — Static Edge Pipeline in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/05-loop.html"><strong>Loop in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/06-branch.html">Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/07-fan-out.html">Fan-Out</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/08-fan-in.html"><strong>Fan-In in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/09-join.html"><strong>Join in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/10-merge.html">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/11-split.html"><strong>Split in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/12-gate.html"><strong>Gate in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/13-barrier.html">Barrier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/14-semaphore.html">Semaphore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/15-priority-routing.html"><strong>Priority Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/16-load-based-routing.html"><strong>Load-Based Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/17-data-driven-routing.html"><strong>Data-Driven Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/18-event-driven-routing.html">Event-Driven Routing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../5-multi-agent-systems/overview.html">Multi-Agent Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/00-agent.html"><strong>Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/01-agent-role.html"><strong>Agent Role in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/02-supervisor-agent.html"><strong>Supervisor Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/03-worker-agent.html"><strong>Worker Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/04-planner-agent.html"><strong>Planner Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/05-executor-agent.html"><strong>Executor Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/06-critic-agent.html"><strong>Critic Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/07-reviewer-agent.html"><strong>Reviewer Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/08-tool-using-agent.html"><strong>Tool-Using Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/09-collaborative-agents.html"><strong>Collaborative Agents in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/10-autonomous-agents.html"><strong>Autonomous Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/11-delegation.html"><strong>Delegation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/12-coordination.html"><strong>Coordination in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/13-negotiation.html"><strong>Negotiation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/14-arbitration.html"><strong>Arbitration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/15-consensus.html"><strong>Consensus in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/16-debate.html"><strong>Debate Pattern in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/17-agent-memory.html"><strong>Agent Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/18-agent-communication.html"><strong>Agent Communication in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/19-agent-protocols.html"><strong>Agent Protocol in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/20-message-passing.html"><strong>Message Passing in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../6-human-in-the-loop/overview.html">Human-in-the-Loop</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/00-human-approval.html"><strong>Human Approval in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/01-manual-intervention.html"><strong>Manual Intervention in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/02-review-gate.html"><strong>Review Gate in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/03-correction-injection.html"><strong>Correction Injection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/04-override.html"><strong>Override in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/05-step-through-execution.html"><strong>Step-Thought Execution in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/06-interactive-debugging.html"><strong>Interactive Debugging in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/07-live-state-inspection.html"><strong>Live State Inspection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/08-human-feedback.html"><strong>Human Feedback in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/09-reinforcement-feedback.html"><strong>Reinforcement Feedback in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../7-tool-llm-integration/overview.html">Tool &amp; LLM Integration</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/00-llm-invocation.html">LLM Invocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/01-prompt-template.html">Prompt Template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/02-prompt-routing.html"><strong>Prompt Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/03-tool-calling.html"><strong>Tool Calling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/04-tool-binding.html"><strong>Tool Binding in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/05-tool-registry.html">Tool Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/06-tool-selection.html"><strong>Tool Selection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/07-tool-policies.html"><strong>Tool Policies in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/08-model-selection.html">Model Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/09-model-routing.html">Model Routing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/10-multi-model-orchestration.html">Multi-Model Orchestration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/11-streaming-tokens.html"><strong>Streaming Tokens in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/12-token-budgeting.html"><strong>Token Budgeting in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/13-cost-tracking.html"><strong>Cost Tracking in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../8-memory-persistence/overview.html">Memory &amp; Persistence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/00-checkpoint-store.html"><strong>Checkpoint Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/01-state-store.html"><strong>State Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/02-vector-store.html"><strong>Vector Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/03-cache.html"><strong>Cache in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/04-session-store.html"><strong>Session Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/05-event-store.html"><strong>Event Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/06-audit-log.html"><strong>Audit Log in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/07-execution-log.html"><strong>Execution Log in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/08-trace-log.html"><strong>Trace Log in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../9-reliability-fault-tolerance/overview.html">Reliability &amp; Fault Tolerance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/00-error-handling.html"><strong>Error Handling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/01-exception-capture.html"><strong>Exception Capture in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/02-retry-policy.html"><strong>Exception &amp; Retry Policy in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/03-backoff-strategy.html"><strong>Exception Backoff in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/04-circuit-breaker.html"><strong>Exception &amp; Circuit Breaker in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/05-failover.html"><strong>Exception Failover in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/06-recovery-strategy.html"><strong>Recovery Strategy in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/07-idempotency.html"><strong>Idempotency in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/08-deduplication.html"><strong>Deduplication in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/09-dead-letter-queue.html">Dead Letter Queue (DLQ)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/10-compensating-actions.html"><strong>Compensating Action in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/11-graceful-degradation.html"><strong>Graceful Degradation in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../10-performance-scalability/overview.html">Performance &amp; Scalability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/00-async-execution.html"><strong>Async Execution in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/01-parallel-execution.html">Parallel Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/02-concurrency-control.html"><strong>Concurrency Control in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/03-thread-pool.html"><strong>Thread Pool in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/04-worker-pool.html"><strong>Worker Pool in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/05-load-balancing.html"><strong>Load Balancing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/06-horizontal-scaling.html"><strong>Horizontal Scaling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/07-vertical-scaling.html"><strong>Vertical Scaling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/08-throughput-optimization.html"><strong>Throughput Optimization in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/10-memory-optimization.html"><strong>Latency Optimization in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/11-cost-optimization.html"><strong>Cost Optimization in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/12-cold-start-handling.html"><strong>Cold Start Handling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/13-warm-start.html"><strong>Warm Start in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../11-observability-operations/overview.html">Observability &amp; Operations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/00-logging.html"><strong>Logging in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/01-tracing.html"><strong>Tracing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/02-metrics.html"><strong>Metrics in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/03-monitoring.html"><strong>Monitoring in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/04-alerting.html">Alerting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/05-debug-mode.html">Debug Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/06-replay-mode.html">Replay Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/07-visualization.html"><strong>Visualization in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/08-graph-viewer.html"><strong>Graph Viewer in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/09-execution-timeline.html">Execution Timeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/10-performance-profiling.html">Performance Profiling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../12-security-governance/overview.html">Security &amp; Governance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/00-authentication.html">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/01-authorization.html">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/02-role-based-access-control.html"><strong>Role-Based Access Control (RBAC) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/03-secrets-management.html"><strong>Secret Management in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/04-data-encryption.html">Data Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/05-secure-state-storage.html"><strong>Secure State Storage in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/06-audit-trails.html">Audit Trails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/07-compliance.html">Compliance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/08-policy-enforcement.html">Policy Enforcement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/09-prompt-safety.html">Prompt Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/10-tool-sandboxing.html">Tool Sandboxing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../13-deployment-production-architecture/overview.html">Deployment &amp; Production Architecture</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/00-local-runtime.html"><strong>Local Runtime in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/01-cloud-runtime.html">Cloud Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/02-distributed-runtime.html">Distributed Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/03-containerization.html">Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/04-orchestration-kubernetes.html">Orchestration with Kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/05-cicd-integration.html">CI/CD Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/06-blue-green-deployment.html">Demonstration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/07-canary-deployment.html">Canary Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/08-versioned-graphs.html">Versioned Graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/09-rollout-strategy.html">Rollout Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/10-rollback-strategy.html">Rollback Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/11-environment-isolation.html">Environment Isolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/12-multi-tenant-execution.html">Multi-Tenant Execution</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../14-advanced-design-patterns/overview.html">Advanced Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/00-react-loop.html">ReAct Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/01-planner-executor.html"><strong>Planner–Executor Pattern in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/02-reflection-loop.html"><strong>Reflection Loop in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/03-self-correction-loop.html"><strong>Self-Correction Loop in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/04-map-reduce.html"><strong>Map–Reduce in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/05-tree-of-thoughts.html"><strong>Tree of Thought (ToT) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/06-chain-of-thought-control.html"><strong>Chain of Thought in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/07-debate-consensus.html"><strong>Debate–Consensus Pattern in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/08-multi-step-pipelines.html"><strong>Multi-Step Pipeline in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/09-event-driven-workflow.html"><strong>Event-Driven Workflow in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/10-self-healing-graph.html">Self-Healing Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/11-autonomous-workflow.html"><strong>Autonomous Workflow in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/12-swarm-architecture.html"><strong>SWARM Architecture in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../15-developer-experience/overview.html">Developer Experience</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/00-graph-builder.html">Graph Builder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/01-visual-editor.html"><strong>Visual Editor in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/02-dsl.html"><strong>Domain-Specific Language (DSL) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/03-configuration-management.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/04-environment-config.html"><strong>Environment Configuration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/05-hot-reload.html"><strong>Hot Reload in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/06-testing-framework.html"><strong>Testing Framework in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/07-unit-tests.html">Unit Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/08-integration-tests.html">Integration Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/09-simulation.html"><strong>Simulation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/10-mocking.html"><strong>Mocking in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/11-staging-environment.html"><strong>Staging Environment in LangGraph</strong></a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/svgoudar/Learn-LangGraph/blob/master/langgraph/2-state-data-management/06-immutable-state-transitions.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/svgoudar/Learn-LangGraph" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/svgoudar/Learn-LangGraph/issues/new?title=Issue%20on%20page%20%2Flanggraph/2-state-data-management/06-immutable-state-transitions.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/langgraph/2-state-data-management/06-immutable-state-transitions.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Immutable State Transitions</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation-and-intuition"><strong>1. Motivation and Intuition</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conceptual-model"><strong>2. Conceptual Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-immutable-state-transitions-work"><strong>3. How Immutable State Transitions Work</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#core-mechanism"><strong>Core Mechanism</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#state-update-strategies"><strong>4. State Update Strategies</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#default-replace"><strong>Default: Replace</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#append-to-list"><strong>Append to List</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-reducer"><strong>Custom Reducer</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-immutability-matters"><strong>5. Why Immutability Matters</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#immutable-vs-mutable-state"><strong>6. Immutable vs Mutable State</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-immutable-message-accumulation"><strong>7. Example: Immutable Message Accumulation</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#immutability-in-cyclic-graphs"><strong>8. Immutability in Cyclic Graphs</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#checkpoint-consistency"><strong>9. Checkpoint Consistency</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-considerations"><strong>10. Performance Considerations</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#anti-patterns-to-avoid"><strong>11. Anti-Patterns to Avoid</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model"><strong>12. Mental Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-immutable-patterns"><strong>13. When to Use Immutable Patterns</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-custom-immutable-reducers"><strong>14. Advanced: Custom Immutable Reducers</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functional-purity-and-state-transitions"><strong>15. Functional Purity and State Transitions</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#immutability-and-human-in-the-loop"><strong>16. Immutability and Human-in-the-Loop</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-design-principles"><strong>17. Key Design Principles</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-other-paradigms"><strong>18. Comparison with Other Paradigms</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration"><strong>Demonstration</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-basic-immutable-state-update"><strong>Example 1: Basic Immutable State Update</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-immutable-list-operations-with-reducers"><strong>Example 2: Immutable List Operations with Reducers</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-3-immutable-nested-data-structures"><strong>Example 3: Immutable Nested Data Structures</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-4-checkpoint-consistency-with-immutability"><strong>Example 4: Checkpoint Consistency with Immutability</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-5-preventing-mutation-bugs"><strong>Example 5: Preventing Mutation Bugs</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-6-custom-immutable-reducer-for-complex-merging"><strong>Example 6: Custom Immutable Reducer for Complex Merging</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-7-functional-purity-and-reproducibility"><strong>Example 7: Functional Purity and Reproducibility</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways"><strong>Key Takeaways</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices-summary"><strong>Best Practices Summary</strong></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#immutable-state-transitions" id="id1">Immutable State Transitions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#motivation-and-intuition" id="id2"><strong>1. Motivation and Intuition</strong></a></p></li>
+<li><p><a class="reference internal" href="#conceptual-model" id="id3"><strong>2. Conceptual Model</strong></a></p></li>
+<li><p><a class="reference internal" href="#how-immutable-state-transitions-work" id="id4"><strong>3. How Immutable State Transitions Work</strong></a></p>
+<ul>
+<li><p><a class="reference internal" href="#core-mechanism" id="id5"><strong>Core Mechanism</strong></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#state-update-strategies" id="id6"><strong>4. State Update Strategies</strong></a></p>
+<ul>
+<li><p><a class="reference internal" href="#default-replace" id="id7"><strong>Default: Replace</strong></a></p></li>
+<li><p><a class="reference internal" href="#append-to-list" id="id8"><strong>Append to List</strong></a></p></li>
+<li><p><a class="reference internal" href="#custom-reducer" id="id9"><strong>Custom Reducer</strong></a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#why-immutability-matters" id="id10"><strong>5. Why Immutability Matters</strong></a></p></li>
+<li><p><a class="reference internal" href="#immutable-vs-mutable-state" id="id11"><strong>6. Immutable vs Mutable State</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-immutable-message-accumulation" id="id12"><strong>7. Example: Immutable Message Accumulation</strong></a></p></li>
+<li><p><a class="reference internal" href="#immutability-in-cyclic-graphs" id="id13"><strong>8. Immutability in Cyclic Graphs</strong></a></p></li>
+<li><p><a class="reference internal" href="#checkpoint-consistency" id="id14"><strong>9. Checkpoint Consistency</strong></a></p></li>
+<li><p><a class="reference internal" href="#performance-considerations" id="id15"><strong>10. Performance Considerations</strong></a></p></li>
+<li><p><a class="reference internal" href="#anti-patterns-to-avoid" id="id16"><strong>11. Anti-Patterns to Avoid</strong></a></p></li>
+<li><p><a class="reference internal" href="#mental-model" id="id17"><strong>12. Mental Model</strong></a></p></li>
+<li><p><a class="reference internal" href="#when-to-use-immutable-patterns" id="id18"><strong>13. When to Use Immutable Patterns</strong></a></p></li>
+<li><p><a class="reference internal" href="#advanced-custom-immutable-reducers" id="id19"><strong>14. Advanced: Custom Immutable Reducers</strong></a></p></li>
+<li><p><a class="reference internal" href="#functional-purity-and-state-transitions" id="id20"><strong>15. Functional Purity and State Transitions</strong></a></p></li>
+<li><p><a class="reference internal" href="#immutability-and-human-in-the-loop" id="id21"><strong>16. Immutability and Human-in-the-Loop</strong></a></p></li>
+<li><p><a class="reference internal" href="#key-design-principles" id="id22"><strong>17. Key Design Principles</strong></a></p></li>
+<li><p><a class="reference internal" href="#comparison-with-other-paradigms" id="id23"><strong>18. Comparison with Other Paradigms</strong></a></p></li>
+<li><p><a class="reference internal" href="#demonstration" id="id24"><strong>Demonstration</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-1-basic-immutable-state-update" id="id25"><strong>Example 1: Basic Immutable State Update</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-2-immutable-list-operations-with-reducers" id="id26"><strong>Example 2: Immutable List Operations with Reducers</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-3-immutable-nested-data-structures" id="id27"><strong>Example 3: Immutable Nested Data Structures</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-4-checkpoint-consistency-with-immutability" id="id28"><strong>Example 4: Checkpoint Consistency with Immutability</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-5-preventing-mutation-bugs" id="id29"><strong>Example 5: Preventing Mutation Bugs</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-6-custom-immutable-reducer-for-complex-merging" id="id30"><strong>Example 6: Custom Immutable Reducer for Complex Merging</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-7-functional-purity-and-reproducibility" id="id31"><strong>Example 7: Functional Purity and Reproducibility</strong></a></p></li>
+<li><p><a class="reference internal" href="#key-takeaways" id="id32"><strong>Key Takeaways</strong></a></p></li>
+<li><p><a class="reference internal" href="#best-practices-summary" id="id33"><strong>Best Practices Summary</strong></a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="immutable-state-transitions">
+<h1><a class="toc-backref" href="#id1">Immutable State Transitions</a><a class="headerlink" href="#immutable-state-transitions" title="Permalink to this heading">#</a></h1>
+<p>In LangGraph, <strong>Immutable State Transitions</strong> refer to the principle that <strong>state is never modified in-place</strong>; instead, each node produces <strong>new state objects</strong> that replace or merge with the existing state. This functional programming paradigm ensures <strong>predictability, reproducibility, safe concurrency, and reliable checkpointing</strong>.</p>
+<hr class="docutils" />
+<section id="motivation-and-intuition">
+<h2><a class="toc-backref" href="#id2"><strong>1. Motivation and Intuition</strong></a><a class="headerlink" href="#motivation-and-intuition" title="Permalink to this heading">#</a></h2>
+<p>Traditional stateful systems often use <strong>mutable state</strong>, where data structures are modified directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mutable approach (NOT LangGraph)</span>
+<span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_message</span><span class="p">)</span>  <span class="c1"># modifies in-place</span>
+<span class="n">state</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>                   <span class="c1"># mutates existing value</span>
+</pre></div>
+</div>
+<p>This creates problems:</p>
+<ul class="simple">
+<li><p><strong>Race conditions</strong> in concurrent execution</p></li>
+<li><p><strong>Checkpoint corruption</strong> when state changes mid-save</p></li>
+<li><p><strong>Hard-to-debug behavior</strong> from hidden mutations</p></li>
+<li><p><strong>Irreproducible runs</strong> due to mutation order</p></li>
+</ul>
+<p>LangGraph uses <strong>immutable transitions</strong> instead:</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mutable Approach</p></th>
+<th class="head"><p>Immutable Approach</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Modify state directly</p></td>
+<td><p>Return new state</p></td>
+</tr>
+<tr class="row-odd"><td><p>Unpredictable ordering</p></td>
+<td><p>Deterministic updates</p></td>
+</tr>
+<tr class="row-even"><td><p>Hard to replay</p></td>
+<td><p>Trivial to replay</p></td>
+</tr>
+<tr class="row-odd"><td><p>Concurrency issues</p></td>
+<td><p>Thread-safe by default</p></td>
+</tr>
+<tr class="row-even"><td><p>Checkpoint drift</p></td>
+<td><p>Perfect checkpoint consistency</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="conceptual-model">
+<h2><a class="toc-backref" href="#id3"><strong>2. Conceptual Model</strong></a><a class="headerlink" href="#conceptual-model" title="Permalink to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>State(t)  ────→  [  Node  ]  ────→  State(t+1)
+  (input)       (pure function)      (new output)
+
+State(t) remains unchanged
+State(t+1) = merge(State(t), node_output)
+</pre></div>
+</div>
+<p>Each transition creates a <strong>new version</strong> of the state.</p>
+</section>
+<hr class="docutils" />
+<section id="how-immutable-state-transitions-work">
+<h2><a class="toc-backref" href="#id4"><strong>3. How Immutable State Transitions Work</strong></a><a class="headerlink" href="#how-immutable-state-transitions-work" title="Permalink to this heading">#</a></h2>
+<section id="core-mechanism">
+<h3><a class="toc-backref" href="#id5"><strong>Core Mechanism</strong></a><a class="headerlink" href="#core-mechanism" title="Permalink to this heading">#</a></h3>
+<p>Nodes receive the current state and <strong>return updates</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">results</span><span class="p">:</span> <span class="nb">dict</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">my_node</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">GraphState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># State parameter is READ-ONLY</span>
+    <span class="c1"># DO NOT modify state directly</span>
+    
+    <span class="c1"># Instead, return new values</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;new message&quot;</span><span class="p">],</span>  <span class="c1"># new list</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>                        <span class="c1"># new value</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>LangGraph then <strong>merges</strong> the returned dictionary into the state.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="state-update-strategies">
+<h2><a class="toc-backref" href="#id6"><strong>4. State Update Strategies</strong></a><a class="headerlink" href="#state-update-strategies" title="Permalink to this heading">#</a></h2>
+<p>LangGraph supports different merge strategies through <strong>reducers</strong>:</p>
+<section id="default-replace">
+<h3><a class="toc-backref" href="#id7"><strong>Default: Replace</strong></a><a class="headerlink" href="#default-replace" title="Permalink to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">node</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="s2">&quot;new value&quot;</span><span class="p">}</span>  <span class="c1"># replaces old value</span>
+</pre></div>
+</div>
+</section>
+<section id="append-to-list">
+<h3><a class="toc-backref" href="#id8"><strong>Append to List</strong></a><a class="headerlink" href="#append-to-list" title="Permalink to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_messages</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">add_messages</span><span class="p">]</span>  <span class="c1"># special reducer</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">node</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">new_message</span><span class="p">]}</span>  <span class="c1"># appends, doesn&#39;t replace</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-reducer">
+<h3><a class="toc-backref" href="#id9"><strong>Custom Reducer</strong></a><a class="headerlink" href="#custom-reducer" title="Permalink to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">merge_dicts</span><span class="p">(</span><span class="n">existing</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">existing</span><span class="p">,</span> <span class="o">**</span><span class="n">new</span><span class="p">}</span>  <span class="c1"># immutable merge</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">data</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">merge_dicts</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>All strategies produce <strong>new state objects</strong>.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="why-immutability-matters">
+<h2><a class="toc-backref" href="#id10"><strong>5. Why Immutability Matters</strong></a><a class="headerlink" href="#why-immutability-matters" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Benefit</p></th>
+<th class="head"><p>How Immutability Helps</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Reproducibility</strong></p></td>
+<td><p>Same input → same output, always</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Time Travel</strong></p></td>
+<td><p>Can restore any past state exactly</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Debugging</strong></p></td>
+<td><p>Every state transition is traceable</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Concurrency</strong></p></td>
+<td><p>No race conditions, safe parallel execution</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Checkpointing</strong></p></td>
+<td><p>State snapshots are consistent</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Testing</strong></p></td>
+<td><p>Pure functions are easy to test</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Reasoning</strong></p></td>
+<td><p>Easier to understand data flow</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="immutable-vs-mutable-state">
+<h2><a class="toc-backref" href="#id11"><strong>6. Immutable vs Mutable State</strong></a><a class="headerlink" href="#immutable-vs-mutable-state" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Immutable (LangGraph)</p></th>
+<th class="head"><p>Mutable (Traditional)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Node function</p></td>
+<td><p>Returns new state</p></td>
+<td><p>Modifies state</p></td>
+</tr>
+<tr class="row-odd"><td><p>Safety</p></td>
+<td><p>Thread-safe</p></td>
+<td><p>Requires locking</p></td>
+</tr>
+<tr class="row-even"><td><p>Replay</p></td>
+<td><p>Exact replay possible</p></td>
+<td><p>Cannot replay reliably</p></td>
+</tr>
+<tr class="row-odd"><td><p>Debugging</p></td>
+<td><p>Clear state history</p></td>
+<td><p>Hidden mutations</p></td>
+</tr>
+<tr class="row-even"><td><p>Performance</p></td>
+<td><p>Copy overhead (minimal)</p></td>
+<td><p>No copy overhead</p></td>
+</tr>
+<tr class="row-odd"><td><p>Complexity</p></td>
+<td><p>Simpler reasoning</p></td>
+<td><p>Complex side effects</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="example-immutable-message-accumulation">
+<h2><a class="toc-backref" href="#id12"><strong>7. Example: Immutable Message Accumulation</strong></a><a class="headerlink" href="#example-immutable-message-accumulation" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">add_messages</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ChatState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">messages</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">add_messages</span><span class="p">]</span>
+    <span class="n">analysis</span><span class="p">:</span> <span class="nb">dict</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">agent_node</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">ChatState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># Read current state (immutable)</span>
+    <span class="n">current_messages</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]</span>
+    
+    <span class="c1"># Compute new message (local computation)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">current_messages</span><span class="p">)</span>
+    
+    <span class="c1"># Return NEW state update (immutable)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">response</span><span class="p">],</span>  <span class="c1"># add_messages will append immutably</span>
+        <span class="s2">&quot;analysis&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;tokens&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)}</span>
+    <span class="p">}</span>
+
+<span class="c1"># LangGraph creates: State(new) = merge(State(old), agent_node(State(old)))</span>
+</pre></div>
+</div>
+<p><strong>Key Point</strong>: <code class="docutils literal notranslate"><span class="pre">current_messages</span></code> is never modified. New messages are returned.</p>
+</section>
+<hr class="docutils" />
+<section id="immutability-in-cyclic-graphs">
+<h2><a class="toc-backref" href="#id13"><strong>8. Immutability in Cyclic Graphs</strong></a><a class="headerlink" href="#immutability-in-cyclic-graphs" title="Permalink to this heading">#</a></h2>
+<p>In loops, immutability prevents <strong>state corruption</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">loop_node</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">iteration</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;iteration&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    
+    <span class="c1"># WRONG: state[&quot;iteration&quot;] += 1  # mutation!</span>
+    
+    <span class="c1"># CORRECT: return new value</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;iteration&quot;</span><span class="p">:</span> <span class="n">iteration</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="n">process</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">])</span>  <span class="c1"># new processed data</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Each cycle iteration produces a <strong>clean, new state version</strong>.</p>
+</section>
+<hr class="docutils" />
+<section id="checkpoint-consistency">
+<h2><a class="toc-backref" href="#id14"><strong>9. Checkpoint Consistency</strong></a><a class="headerlink" href="#checkpoint-consistency" title="Permalink to this heading">#</a></h2>
+<p>Immutability guarantees checkpoints are <strong>atomic snapshots</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Checkpoint 1: State(v1)
+    ↓
+[Node executes]
+    ↓
+Checkpoint 2: State(v2) = merge(State(v1), updates)
+</pre></div>
+</div>
+<p>Because <code class="docutils literal notranslate"><span class="pre">State(v1)</span></code> is immutable, it remains valid even after checkpoint 2 is created.</p>
+</section>
+<hr class="docutils" />
+<section id="performance-considerations">
+<h2><a class="toc-backref" href="#id15"><strong>10. Performance Considerations</strong></a><a class="headerlink" href="#performance-considerations" title="Permalink to this heading">#</a></h2>
+<p><strong>Q: Doesn’t copying state on every transition hurt performance?</strong></p>
+<p><strong>A: No, for several reasons:</strong></p>
+<ol class="arabic">
+<li><p><strong>Structural Sharing</strong>: Python and LangGraph reuse unchanged parts</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">old_state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="o">...</span><span class="p">}}</span>
+<span class="n">new_state</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">old_state</span><span class="p">,</span> <span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="n">old_state</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">4</span><span class="p">]}</span>
+<span class="c1"># &quot;config&quot; is shared, not copied</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Shallow Copies</strong>: Only top-level structure is copied</p></li>
+<li><p><strong>Lazy Evaluation</strong>: Some frameworks defer copies until needed</p></li>
+<li><p><strong>Trade-off</strong>: Small copy cost &lt;&lt; debugging/concurrency benefits</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="anti-patterns-to-avoid">
+<h2><a class="toc-backref" href="#id16"><strong>11. Anti-Patterns to Avoid</strong></a><a class="headerlink" href="#anti-patterns-to-avoid" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Anti-Pattern</p></th>
+<th class="head"><p>Why Bad</p></th>
+<th class="head"><p>Correct Approach</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">state[&quot;x&quot;]</span> <span class="pre">=</span> <span class="pre">y</span></code></p></td>
+<td><p>Mutates state</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">{&quot;x&quot;:</span> <span class="pre">y}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">state[&quot;list&quot;].append(item)</span></code></p></td>
+<td><p>Mutates list</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">{&quot;list&quot;:</span> <span class="pre">[...]</span> <span class="pre">}</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Modifying nested objects</p></td>
+<td><p>Hidden mutation</p></td>
+<td><p>Deep copy + modify</p></td>
+</tr>
+<tr class="row-odd"><td><p>Relying on mutation order</p></td>
+<td><p>Non-deterministic</p></td>
+<td><p>Pure functions</p></td>
+</tr>
+<tr class="row-even"><td><p>Side effects in state updates</p></td>
+<td><p>Violates functional purity</p></td>
+<td><p>Keep side effects local</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="mental-model">
+<h2><a class="toc-backref" href="#id17"><strong>12. Mental Model</strong></a><a class="headerlink" href="#mental-model" title="Permalink to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>Immutable State = Git Commits</strong><br />
+Each state transition is like a git commit: creates a new version, old versions remain intact.</p>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>State(v1) → [Node A] → State(v2) → [Node B] → State(v3)
+  ↓                      ↓                      ↓
+checkpoint 1          checkpoint 2          checkpoint 3
+</pre></div>
+</div>
+<p>You can always return to any checkpoint.</p>
+</section>
+<hr class="docutils" />
+<section id="when-to-use-immutable-patterns">
+<h2><a class="toc-backref" href="#id18"><strong>13. When to Use Immutable Patterns</strong></a><a class="headerlink" href="#when-to-use-immutable-patterns" title="Permalink to this heading">#</a></h2>
+<p><strong>Always</strong> in LangGraph, but especially critical for:</p>
+<ul class="simple">
+<li><p><strong>Multi-agent systems</strong>: Prevents agents from interfering with each other</p></li>
+<li><p><strong>Human-in-the-loop</strong>: State must be frozen while awaiting input</p></li>
+<li><p><strong>Long-running workflows</strong>: Checkpoints must remain consistent</p></li>
+<li><p><strong>Parallel execution</strong>: Concurrent nodes cannot corrupt shared state</p></li>
+<li><p><strong>Production systems</strong>: Reproducibility and debugging are essential</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="advanced-custom-immutable-reducers">
+<h2><a class="toc-backref" href="#id19"><strong>14. Advanced: Custom Immutable Reducers</strong></a><a class="headerlink" href="#advanced-custom-immutable-reducers" title="Permalink to this heading">#</a></h2>
+<p>For complex state types, define custom immutable reducers:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">immutable_merge_scores</span><span class="p">(</span><span class="n">old</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge score dictionaries immutably.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">old</span><span class="p">,</span> <span class="o">**</span><span class="n">new</span><span class="p">}</span>  <span class="c1"># creates new dict</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">scores</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">immutable_merge_scores</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">scorer</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;scores&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="mf">0.95</span><span class="p">}}</span>  <span class="c1"># merged immutably</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="functional-purity-and-state-transitions">
+<h2><a class="toc-backref" href="#id20"><strong>15. Functional Purity and State Transitions</strong></a><a class="headerlink" href="#functional-purity-and-state-transitions" title="Permalink to this heading">#</a></h2>
+<p>Immutability enables <strong>pure functions</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">pure_node</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="c1"># Given the same input state, ALWAYS returns the same output</span>
+    <span class="c1"># No side effects (except I/O like LLM calls, which are external)</span>
+    
+    <span class="n">result</span> <span class="o">=</span> <span class="n">deterministic_transform</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Benefits</strong>:</p>
+<ul class="simple">
+<li><p>Testable: <code class="docutils literal notranslate"><span class="pre">assert</span> <span class="pre">pure_node(test_state)</span> <span class="pre">==</span> <span class="pre">expected_output</span></code></p></li>
+<li><p>Cacheable: Same input → same output</p></li>
+<li><p>Parallelizable: No shared mutable state</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="immutability-and-human-in-the-loop">
+<h2><a class="toc-backref" href="#id21"><strong>16. Immutability and Human-in-the-Loop</strong></a><a class="headerlink" href="#immutability-and-human-in-the-loop" title="Permalink to this heading">#</a></h2>
+<p>When execution pauses for human input, immutability ensures <strong>state integrity</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">before_human_node</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="c1"># State is checkpointed here (immutably)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;awaiting_human&quot;</span><span class="p">}</span>
+
+<span class="c1"># [Execution pauses]</span>
+<span class="c1"># State remains unchanged while waiting</span>
+<span class="c1"># User provides input</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">after_human_node</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="c1"># State is exactly as it was before pause</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;processing&quot;</span><span class="p">,</span> <span class="s2">&quot;user_input&quot;</span><span class="p">:</span> <span class="n">get_input</span><span class="p">()}</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-design-principles">
+<h2><a class="toc-backref" href="#id22"><strong>17. Key Design Principles</strong></a><a class="headerlink" href="#key-design-principles" title="Permalink to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>1. Treat state as read-only input</strong><br />
+<strong>2. Return only what changed</strong><br />
+<strong>3. Use reducers for complex merge logic</strong><br />
+<strong>4. Never mutate nested structures</strong><br />
+<strong>5. Embrace functional purity</strong></p>
+</div></blockquote>
+<p>Following these principles yields <strong>reliable, scalable, maintainable LangGraph applications</strong>.</p>
+</section>
+<hr class="docutils" />
+<section id="comparison-with-other-paradigms">
+<h2><a class="toc-backref" href="#id23"><strong>18. Comparison with Other Paradigms</strong></a><a class="headerlink" href="#comparison-with-other-paradigms" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Paradigm</p></th>
+<th class="head"><p>State Handling</p></th>
+<th class="head"><p>LangGraph Alignment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Functional</p></td>
+<td><p>Immutable</p></td>
+<td><p>✅ Perfect match</p></td>
+</tr>
+<tr class="row-odd"><td><p>Object-Oriented</p></td>
+<td><p>Often mutable</p></td>
+<td><p>⚠️ Requires care</p></td>
+</tr>
+<tr class="row-even"><td><p>Reactive (Rx)</p></td>
+<td><p>Immutable streams</p></td>
+<td><p>✅ Compatible</p></td>
+</tr>
+<tr class="row-odd"><td><p>Event Sourcing</p></td>
+<td><p>Immutable events</p></td>
+<td><p>✅ Similar model</p></td>
+</tr>
+<tr class="row-even"><td><p>Traditional Agents</p></td>
+<td><p>Mutable blackboard</p></td>
+<td><p>❌ Incompatible</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>LangGraph adopts <strong>functional + event sourcing</strong> principles.</p>
+</section>
+<hr class="docutils" />
+<section id="demonstration">
+<h2><a class="toc-backref" href="#id24"><strong>Demonstration</strong></a><a class="headerlink" href="#demonstration" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="example-1-basic-immutable-state-update">
+<h2><a class="toc-backref" href="#id25"><strong>Example 1: Basic Immutable State Update</strong></a><a class="headerlink" href="#example-1-basic-immutable-state-update" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+
+<span class="c1"># Define state schema</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CounterState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+
+<span class="c1"># Node that demonstrates immutable state update</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">increment_node</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">CounterState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Demonstrates immutable state transition.</span>
+<span class="sd">    NEVER modifies the input state directly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read from state (immutable access)</span>
+    <span class="n">current_count</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span>
+    
+    <span class="c1"># Compute new values locally</span>
+    <span class="n">new_count</span> <span class="o">=</span> <span class="n">current_count</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">new_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Count is now </span><span class="si">{</span><span class="n">new_count</span><span class="si">}</span><span class="s2">&quot;</span>
+    
+    <span class="c1"># Return NEW state values (immutable update)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="n">new_count</span><span class="p">,</span>
+        <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">new_message</span>
+    <span class="p">}</span>
+
+<span class="c1"># Build graph</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">CounterState</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;increment&quot;</span><span class="p">,</span> <span class="n">increment_node</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;increment&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;increment&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="c1"># Execute with initial state</span>
+<span class="n">initial_state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Starting&quot;</span><span class="p">}</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial state:&quot;</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">initial_state</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">After transition:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Original state unchanged:&quot;</span><span class="p">,</span> <span class="n">initial_state</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Initial state: {&#39;count&#39;: 0, &#39;message&#39;: &#39;Starting&#39;}
+
+After transition: {&#39;count&#39;: 1, &#39;message&#39;: &#39;Count is now 1&#39;}
+
+Original state unchanged: {&#39;count&#39;: 0, &#39;message&#39;: &#39;Starting&#39;}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-2-immutable-list-operations-with-reducers">
+<h2><a class="toc-backref" href="#id26"><strong>Example 2: Immutable List Operations with Reducers</strong></a><a class="headerlink" href="#example-2-immutable-list-operations-with-reducers" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+
+<span class="c1"># Custom reducer for immutable list append</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">append_immutably</span><span class="p">(</span><span class="n">existing</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Immutably appends new items to existing list.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">existing</span> <span class="o">+</span> <span class="n">new</span>  <span class="c1"># Creates new list, doesn&#39;t modify existing</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">LogState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">logs</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">append_immutably</span><span class="p">]</span>
+    <span class="n">step</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">log_step_1</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">LogState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;First processing step.&quot;&quot;&quot;</span>
+    <span class="c1"># WRONG: state[&quot;logs&quot;].append(&quot;Step 1&quot;)  # This would mutate!</span>
+    
+    <span class="c1"># CORRECT: Return new items to append</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;logs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Started processing&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">log_step_2</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">LogState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Second processing step.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;logs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Completed step </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;Moving to step 2&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">2</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">log_step_3</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">LogState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Final step.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;logs&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Completed step </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;Finished all steps&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">3</span>
+    <span class="p">}</span>
+
+<span class="c1"># Build graph</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">LogState</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;step1&quot;</span><span class="p">,</span> <span class="n">log_step_1</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;step2&quot;</span><span class="p">,</span> <span class="n">log_step_2</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;step3&quot;</span><span class="p">,</span> <span class="n">log_step_3</span><span class="p">)</span>
+
+<span class="n">graph</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;step1&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;step1&quot;</span><span class="p">,</span> <span class="s2">&quot;step2&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;step2&quot;</span><span class="p">,</span> <span class="s2">&quot;step3&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;step3&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="c1"># Execute</span>
+<span class="n">initial_state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logs&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">initial_state</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final logs:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">log</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">&quot;logs&quot;</span><span class="p">],</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">log</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Final step: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;step&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Original state still intact: </span><span class="si">{</span><span class="n">initial_state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-3-immutable-nested-data-structures">
+<h2><a class="toc-backref" href="#id27"><strong>Example 3: Immutable Nested Data Structures</strong></a><a class="headerlink" href="#example-3-immutable-nested-data-structures" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">NestedState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">user</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">settings</span><span class="p">:</span> <span class="nb">dict</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">update_user_profile</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">NestedState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Demonstrates immutable updates to nested dictionaries.</span>
+<span class="sd">    CRITICAL: Must create new dictionary, not modify existing one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># WRONG APPROACH (mutates state):</span>
+    <span class="c1"># state[&quot;user&quot;][&quot;name&quot;] = &quot;Alice&quot;  # DON&#39;T DO THIS!</span>
+    
+    <span class="c1"># CORRECT APPROACH 1: Spread operator</span>
+    <span class="n">new_user</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;user&quot;</span><span class="p">],</span>  <span class="c1"># Copy existing fields</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Alice&quot;</span><span class="p">,</span>  <span class="c1"># Update specific field</span>
+        <span class="s2">&quot;updated&quot;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">}</span>
+    
+    <span class="c1"># CORRECT APPROACH 2: For deep nested structures</span>
+    <span class="n">new_settings</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;settings&quot;</span><span class="p">])</span>
+    <span class="n">new_settings</span><span class="p">[</span><span class="s2">&quot;theme&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dark&quot;</span>  <span class="c1"># Now safe to modify (it&#39;s a copy)</span>
+    
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">new_user</span><span class="p">,</span>      <span class="c1"># New dictionary</span>
+        <span class="s2">&quot;settings&quot;</span><span class="p">:</span> <span class="n">new_settings</span>  <span class="c1"># New dictionary</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_metrics</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">NestedState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate metrics immutably.&quot;&quot;&quot;</span>
+    <span class="c1"># Create completely new metrics dictionary</span>
+    <span class="n">new_metrics</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;user_updates&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;metrics&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user_updates&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;last_update&quot;</span><span class="p">:</span> <span class="s2">&quot;2025-12-28&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;active&quot;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;metrics&quot;</span><span class="p">:</span> <span class="n">new_metrics</span><span class="p">}</span>
+
+<span class="c1"># Build graph</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">NestedState</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;update_profile&quot;</span><span class="p">,</span> <span class="n">update_user_profile</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;calculate&quot;</span><span class="p">,</span> <span class="n">calculate_metrics</span><span class="p">)</span>
+
+<span class="n">graph</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;update_profile&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;update_profile&quot;</span><span class="p">,</span> <span class="s2">&quot;calculate&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;calculate&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="c1"># Execute</span>
+<span class="n">initial_state</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Unknown&quot;</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">123</span><span class="p">},</span>
+    <span class="s2">&quot;settings&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;theme&quot;</span><span class="p">:</span> <span class="s2">&quot;light&quot;</span><span class="p">,</span> <span class="s2">&quot;notifications&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="s2">&quot;metrics&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;user_updates&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial state:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  User: </span><span class="si">{</span><span class="n">initial_state</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Settings: </span><span class="si">{</span><span class="n">initial_state</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Metrics: </span><span class="si">{</span><span class="n">initial_state</span><span class="p">[</span><span class="s1">&#39;metrics&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">initial_state</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Final state:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  User: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Settings: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Metrics: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;metrics&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Original state unchanged:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Original user: </span><span class="si">{</span><span class="n">initial_state</span><span class="p">[</span><span class="s1">&#39;user&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Original settings: </span><span class="si">{</span><span class="n">initial_state</span><span class="p">[</span><span class="s1">&#39;settings&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Initial state:
+  User: {&#39;name&#39;: &#39;Unknown&#39;, &#39;id&#39;: 123}
+  Settings: {&#39;theme&#39;: &#39;light&#39;, &#39;notifications&#39;: True}
+  Metrics: {&#39;user_updates&#39;: 0}
+
+Final state:
+  User: {&#39;name&#39;: &#39;Alice&#39;, &#39;id&#39;: 123, &#39;updated&#39;: True}
+  Settings: {&#39;theme&#39;: &#39;dark&#39;, &#39;notifications&#39;: True}
+  Metrics: {&#39;user_updates&#39;: 1, &#39;last_update&#39;: &#39;2025-12-28&#39;, &#39;active&#39;: True}
+
+Original state unchanged:
+  Original user: {&#39;name&#39;: &#39;Unknown&#39;, &#39;id&#39;: 123}
+  Original settings: {&#39;theme&#39;: &#39;light&#39;, &#39;notifications&#39;: True}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-4-checkpoint-consistency-with-immutability">
+<h2><a class="toc-backref" href="#id28"><strong>Example 4: Checkpoint Consistency with Immutability</strong></a><a class="headerlink" href="#example-4-checkpoint-consistency-with-immutability" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.checkpoint.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">MemorySaver</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CheckpointState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">data</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">history</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">process_step_1</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">CheckpointState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;First processing step - demonstrates checkpoint at version 1.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;Processed in step 1&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Step 1 completed&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">process_step_2</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">CheckpointState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Second processing step - demonstrates checkpoint at version 2.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;Processed in step 2&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Step 2 completed&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">process_step_3</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">CheckpointState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Third processing step - demonstrates checkpoint at version 3.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;Processed in step 3&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;history&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;Step 3 completed&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+<span class="c1"># Build graph with checkpointing</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">CheckpointState</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;step1&quot;</span><span class="p">,</span> <span class="n">process_step_1</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;step2&quot;</span><span class="p">,</span> <span class="n">process_step_2</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;step3&quot;</span><span class="p">,</span> <span class="n">process_step_3</span><span class="p">)</span>
+
+<span class="n">graph</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;step1&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;step1&quot;</span><span class="p">,</span> <span class="s2">&quot;step2&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;step2&quot;</span><span class="p">,</span> <span class="s2">&quot;step3&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;step3&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="c1"># Compile with memory checkpointer</span>
+<span class="n">checkpointer</span> <span class="o">=</span> <span class="n">MemorySaver</span><span class="p">()</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">checkpointer</span><span class="o">=</span><span class="n">checkpointer</span><span class="p">)</span>
+
+<span class="c1"># Execute with thread tracking</span>
+<span class="n">thread_id</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;configurable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;thread_id&quot;</span><span class="p">:</span> <span class="s2">&quot;demo-thread&quot;</span><span class="p">}}</span>
+<span class="n">initial_state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">:</span> <span class="s2">&quot;Initial&quot;</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Executing graph with checkpointing ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">final_result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">thread_id</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final version: </span><span class="si">{</span><span class="n">final_result</span><span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final data: </span><span class="si">{</span><span class="n">final_result</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;History: </span><span class="si">{</span><span class="n">final_result</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Retrieve checkpoint history - demonstrates immutability</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Checkpoint History (each is an immutable snapshot) ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">checkpoints</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">get_state_history</span><span class="p">(</span><span class="n">thread_id</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">checkpoint</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">checkpoints</span><span class="p">)):</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">values</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checkpoint </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Version: </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Data: </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  History: </span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;history&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[])</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Executing graph with checkpointing ===
+
+Final version: 3
+Final data: Processed in step 3
+History: [&#39;Step 1 completed&#39;, &#39;Step 2 completed&#39;, &#39;Step 3 completed&#39;]
+
+=== Checkpoint History (each is an immutable snapshot) ===
+
+Checkpoint 0:
+  Version: N/A
+  Data: N/A
+  History: []
+
+Checkpoint 1:
+  Version: 0
+  Data: Initial
+  History: []
+
+Checkpoint 2:
+  Version: 1
+  Data: Processed in step 1
+  History: [&#39;Step 1 completed&#39;]
+
+Checkpoint 3:
+  Version: 2
+  Data: Processed in step 2
+  History: [&#39;Step 1 completed&#39;, &#39;Step 2 completed&#39;]
+
+Checkpoint 4:
+  Version: 3
+  Data: Processed in step 3
+  History: [&#39;Step 1 completed&#39;, &#39;Step 2 completed&#39;, &#39;Step 3 completed&#39;]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-5-preventing-mutation-bugs">
+<h2><a class="toc-backref" href="#id29"><strong>Example 5: Preventing Mutation Bugs</strong></a><a class="headerlink" href="#example-5-preventing-mutation-bugs" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BuggyState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="c1"># BUGGY VERSION - Shows what happens with mutation</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">buggy_node</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">BuggyState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This demonstrates a COMMON BUG - mutating state directly.</span>
+<span class="sd">    DON&#39;T DO THIS!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># BUG: Modifying state directly</span>
+    <span class="n">state</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span>  <span class="c1"># This mutates the input!</span>
+    
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">])</span>
+    <span class="p">}</span>
+
+<span class="c1"># CORRECT VERSION - Immutable approach</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_node</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">BuggyState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correct approach: create new list, don&#39;t modify original.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># CORRECT: Create new list with additional item</span>
+    <span class="n">new_items</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">999</span><span class="p">]</span>  <span class="c1"># Creates new list</span>
+    
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">new_items</span><span class="p">,</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">new_items</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Demonstrating Mutation Bug ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Test buggy version</span>
+<span class="n">original_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">buggy_state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">original_list</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original list before buggy_node: </span><span class="si">{</span><span class="n">original_list</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">buggy_result</span> <span class="o">=</span> <span class="n">buggy_node</span><span class="p">(</span><span class="n">buggy_state</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original list AFTER buggy_node: </span><span class="si">{</span><span class="n">original_list</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;❌ BUG: Original list was mutated!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Test correct version</span>
+<span class="n">original_list_2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="n">correct_state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">original_list_2</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original list before correct_node: </span><span class="si">{</span><span class="n">original_list_2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">correct_result</span> <span class="o">=</span> <span class="n">correct_node</span><span class="p">(</span><span class="n">correct_state</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original list AFTER correct_node: </span><span class="si">{</span><span class="n">original_list_2</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;✅ CORRECT: Original list unchanged!&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New list in result: </span><span class="si">{</span><span class="n">correct_result</span><span class="p">[</span><span class="s1">&#39;items&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Why This Matters in LangGraph ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">When you mutate state directly:</span>
+<span class="s2">1. Checkpoints can become inconsistent</span>
+<span class="s2">2. Replaying execution gives different results</span>
+<span class="s2">3. Concurrent nodes can interfere with each other</span>
+<span class="s2">4. Debugging becomes extremely difficult</span>
+<span class="s2">5. State history is corrupted</span>
+
+<span class="s2">Always use immutable updates!</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Demonstrating Mutation Bug ===
+
+Original list before buggy_node: [1, 2, 3]
+Original list AFTER buggy_node: [1, 2, 3, 999]
+❌ BUG: Original list was mutated!
+
+Original list before correct_node: [1, 2, 3]
+Original list AFTER correct_node: [1, 2, 3]
+✅ CORRECT: Original list unchanged!
+New list in result: [1, 2, 3, 999]
+
+=== Why This Matters in LangGraph ===
+
+When you mutate state directly:
+1. Checkpoints can become inconsistent
+2. Replaying execution gives different results
+3. Concurrent nodes can interfere with each other
+4. Debugging becomes extremely difficult
+5. State history is corrupted
+
+Always use immutable updates!
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-6-custom-immutable-reducer-for-complex-merging">
+<h2><a class="toc-backref" href="#id30"><strong>Example 6: Custom Immutable Reducer for Complex Merging</strong></a><a class="headerlink" href="#example-6-custom-immutable-reducer-for-complex-merging" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">TypedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+
+<span class="c1"># Custom immutable reducer for scores</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">merge_scores_immutably</span><span class="p">(</span><span class="n">existing</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Immutably merges score dictionaries.</span>
+<span class="sd">    Takes max value for duplicate keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create new dictionary (immutable)</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">existing</span><span class="p">}</span>  <span class="c1"># Copy existing</span>
+    
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">merged</span><span class="p">:</span>
+            <span class="c1"># Take maximum score</span>
+            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">merged</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="k">return</span> <span class="n">merged</span>  <span class="c1"># Return new dictionary</span>
+
+<span class="c1"># Custom immutable reducer for lists with deduplication</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">append_unique_immutably</span><span class="p">(</span><span class="n">existing</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">new</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Immutably appends items, removing duplicates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create new list with unique items</span>
+    <span class="n">combined</span> <span class="o">=</span> <span class="n">existing</span> <span class="o">+</span> <span class="n">new</span>
+    <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">combined</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
+            <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">result</span>  <span class="c1"># New list</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">scores</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">merge_scores_immutably</span><span class="p">]</span>
+    <span class="n">tags</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">append_unique_immutably</span><span class="p">]</span>
+    <span class="n">final_score</span><span class="p">:</span> <span class="nb">float</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_quality</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AnalysisState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze quality metrics.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;scores&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="mf">0.85</span><span class="p">,</span> <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="mf">0.90</span><span class="p">},</span>
+        <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;quality-check&quot;</span><span class="p">,</span> <span class="s2">&quot;verified&quot;</span><span class="p">]</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_performance</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AnalysisState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze performance metrics.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;scores&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;performance&quot;</span><span class="p">:</span> <span class="mf">0.92</span><span class="p">,</span> <span class="s2">&quot;quality&quot;</span><span class="p">:</span> <span class="mf">0.88</span><span class="p">},</span>  <span class="c1"># quality will take max</span>
+        <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;performance-check&quot;</span><span class="p">,</span> <span class="s2">&quot;verified&quot;</span><span class="p">]</span>  <span class="c1"># verified won&#39;t duplicate</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_final_score</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">AnalysisState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute final aggregate score.&quot;&quot;&quot;</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">]</span>
+    <span class="n">avg_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">scores</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span> <span class="k">if</span> <span class="n">scores</span> <span class="k">else</span> <span class="mf">0.0</span>
+    
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;final_score&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">avg_score</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="c1"># Build graph</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">AnalysisState</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;quality&quot;</span><span class="p">,</span> <span class="n">analyze_quality</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;performance&quot;</span><span class="p">,</span> <span class="n">analyze_performance</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;finalize&quot;</span><span class="p">,</span> <span class="n">compute_final_score</span><span class="p">)</span>
+
+<span class="n">graph</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;quality&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;quality&quot;</span><span class="p">,</span> <span class="s2">&quot;performance&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;performance&quot;</span><span class="p">,</span> <span class="s2">&quot;finalize&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;finalize&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="c1"># Execute</span>
+<span class="n">initial_state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;scores&quot;</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">&quot;tags&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;final_score&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Demonstrating Custom Immutable Reducers ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Initial state: </span><span class="si">{</span><span class="n">initial_state</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">initial_state</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final state:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Scores: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;scores&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    (Note: quality=0.88, the max of 0.85 and 0.88)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Tags: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;tags&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    (Note: &#39;verified&#39; appears only once)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Final score: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;final_score&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Original state unchanged: </span><span class="si">{</span><span class="n">initial_state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Demonstrating Custom Immutable Reducers ===
+
+Initial state: {&#39;scores&#39;: {}, &#39;tags&#39;: [], &#39;final_score&#39;: 0.0}
+
+Final state:
+  Scores: {&#39;quality&#39;: 0.88, &#39;accuracy&#39;: 0.9, &#39;performance&#39;: 0.92}
+    (Note: quality=0.88, the max of 0.85 and 0.88)
+  Tags: [&#39;quality-check&#39;, &#39;verified&#39;, &#39;performance-check&#39;]
+    (Note: &#39;verified&#39; appears only once)
+  Final score: 0.9
+
+Original state unchanged: {&#39;scores&#39;: {}, &#39;tags&#39;: [], &#39;final_score&#39;: 0.0}
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="example-7-functional-purity-and-reproducibility">
+<h2><a class="toc-backref" href="#id31"><strong>Example 7: Functional Purity and Reproducibility</strong></a><a class="headerlink" href="#example-7-functional-purity-and-reproducibility" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">PureState</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">input_value</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">result</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">call_count</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">pure_transformation</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">PureState</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Pure function: given same input, always returns same output.</span>
+<span class="sd">    No side effects, no mutations, perfectly reproducible.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input_val</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;input_value&quot;</span><span class="p">]</span>
+    
+    <span class="c1"># Deterministic computation</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">input_val</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span>
+    
+    <span class="c1"># Immutable update</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">,</span>
+        <span class="s2">&quot;call_count&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;call_count&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="p">}</span>
+
+<span class="c1"># Build simple graph</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">PureState</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="n">pure_transformation</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">)</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Demonstrating Functional Purity &amp; Reproducibility ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Test reproducibility: same input → same output, every time</span>
+<span class="n">test_state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;input_value&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;call_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running transformation 5 times with identical input:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+    <span class="c1"># Create fresh state each time (immutability in action)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">test_state</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Run </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: input=</span><span class="si">{</span><span class="n">test_state</span><span class="p">[</span><span class="s1">&#39;input_value&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;result=</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, call_count=</span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;call_count&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">✅ Every run produces IDENTICAL results - perfect reproducibility!&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== Verifying Immutability ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Original test_state: </span><span class="si">{</span><span class="n">test_state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;❌ If state were mutable, test_state would have been modified!&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ But it&#39;s unchanged - immutability works!</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Test determinism with different inputs</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== Testing Determinism with Different Inputs ===</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">test_inputs</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">test_inputs</span><span class="p">:</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;input_value&quot;</span><span class="p">:</span> <span class="n">val</span><span class="p">,</span> <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;call_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">(</span><span class="n">val</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">10</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input: </span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> → Result: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2"> &quot;</span>
+          <span class="sa">f</span><span class="s2">&quot;(Expected: </span><span class="si">{</span><span class="n">expected</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">) ✅&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">💡 Key Insight:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Because transformations are pure and immutable:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  1. Results are 100</span><span class="si">% r</span><span class="s2">eproducible&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  2. Easy to test (just check input → output)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  3. Can cache results safely&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  4. Can parallelize without fear&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  5. Debugging is straightforward&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>=== Demonstrating Functional Purity &amp; Reproducibility ===
+
+Running transformation 5 times with identical input:
+
+Run 1: input=5, result=20, call_count=1
+Run 2: input=5, result=20, call_count=1
+Run 3: input=5, result=20, call_count=1
+Run 4: input=5, result=20, call_count=1
+Run 5: input=5, result=20, call_count=1
+
+✅ Every run produces IDENTICAL results - perfect reproducibility!
+
+=== Verifying Immutability ===
+Original test_state: {&#39;input_value&#39;: 5, &#39;result&#39;: 0, &#39;call_count&#39;: 0}
+❌ If state were mutable, test_state would have been modified!
+✅ But it&#39;s unchanged - immutability works!
+
+=== Testing Determinism with Different Inputs ===
+
+Input:   1 → Result:  12 (Expected:  12) ✅
+Input:   5 → Result:  20 (Expected:  20) ✅
+Input:  10 → Result:  30 (Expected:  30) ✅
+Input: 100 → Result: 210 (Expected: 210) ✅
+
+💡 Key Insight:
+Because transformations are pure and immutable:
+  1. Results are 100% reproducible
+  2. Easy to test (just check input → output)
+  3. Can cache results safely
+  4. Can parallelize without fear
+  5. Debugging is straightforward
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="key-takeaways">
+<h2><a class="toc-backref" href="#id32"><strong>Key Takeaways</strong></a><a class="headerlink" href="#key-takeaways" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Immutable State Transitions = Reliability</strong><br />
+Never modify state in-place; always return new values.</p></li>
+<li><p><strong>Use Reducers for Smart Merging</strong><br />
+Custom reducers enable complex, immutable state composition.</p></li>
+<li><p><strong>Checkpoints are Atomic Snapshots</strong><br />
+Immutability ensures perfect checkpoint consistency and replay.</p></li>
+<li><p><strong>Functional Purity Enables Testing</strong><br />
+Pure functions with immutable state are trivial to test and debug.</p></li>
+<li><p><strong>Avoid Common Pitfalls</strong></p>
+<ul class="simple">
+<li><p>Don’t use <code class="docutils literal notranslate"><span class="pre">.append()</span></code>, <code class="docutils literal notranslate"><span class="pre">+=</span></code>, or direct assignment</p></li>
+<li><p>Create new lists/dicts with <code class="docutils literal notranslate"><span class="pre">+</span></code> or <code class="docutils literal notranslate"><span class="pre">{...}</span></code> spread operators</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">copy.deepcopy()</span></code> for deeply nested structures when needed</p></li>
+</ul>
+</li>
+<li><p><strong>Performance is Not an Issue</strong><br />
+Structural sharing and shallow copies make immutability efficient.</p></li>
+<li><p><strong>Immutability = Thread Safety</strong><br />
+Concurrent execution becomes safe by default.</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="best-practices-summary">
+<h2><a class="toc-backref" href="#id33"><strong>Best Practices Summary</strong></a><a class="headerlink" href="#best-practices-summary" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Do ✅</p></th>
+<th class="head"><p>Don’t ❌</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">{&quot;list&quot;:</span> <span class="pre">state[&quot;list&quot;]</span> <span class="pre">+</span> <span class="pre">[item]}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">state[&quot;list&quot;].append(item)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">return</span> <span class="pre">{&quot;count&quot;:</span> <span class="pre">state[&quot;count&quot;]</span> <span class="pre">+</span> <span class="pre">1}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">state[&quot;count&quot;]</span> <span class="pre">+=</span> <span class="pre">1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">new_dict</span> <span class="pre">=</span> <span class="pre">{**old,</span> <span class="pre">&quot;key&quot;:</span> <span class="pre">&quot;new_value&quot;}</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">state[&quot;dict&quot;][&quot;key&quot;]</span> <span class="pre">=</span> <span class="pre">&quot;value&quot;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Use custom reducers for complex merging</p></td>
+<td><p>Modify nested structures directly</p></td>
+</tr>
+<tr class="row-even"><td><p>Treat state parameter as read-only</p></td>
+<td><p>Assume state modifications will persist</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<p><strong>Immutable state transitions are the foundation of reliable, scalable, and maintainable LangGraph applications.</strong></p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./langgraph\2-state-data-management"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="05-partial-state-updates.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><strong>Partial State Updates in LangGraph</strong></p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="07-state-versioning.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><strong>State Versioning in LangGraph</strong></p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation-and-intuition"><strong>1. Motivation and Intuition</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conceptual-model"><strong>2. Conceptual Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-immutable-state-transitions-work"><strong>3. How Immutable State Transitions Work</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#core-mechanism"><strong>Core Mechanism</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#state-update-strategies"><strong>4. State Update Strategies</strong></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#default-replace"><strong>Default: Replace</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#append-to-list"><strong>Append to List</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-reducer"><strong>Custom Reducer</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-immutability-matters"><strong>5. Why Immutability Matters</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#immutable-vs-mutable-state"><strong>6. Immutable vs Mutable State</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-immutable-message-accumulation"><strong>7. Example: Immutable Message Accumulation</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#immutability-in-cyclic-graphs"><strong>8. Immutability in Cyclic Graphs</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#checkpoint-consistency"><strong>9. Checkpoint Consistency</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-considerations"><strong>10. Performance Considerations</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#anti-patterns-to-avoid"><strong>11. Anti-Patterns to Avoid</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model"><strong>12. Mental Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-immutable-patterns"><strong>13. When to Use Immutable Patterns</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-custom-immutable-reducers"><strong>14. Advanced: Custom Immutable Reducers</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#functional-purity-and-state-transitions"><strong>15. Functional Purity and State Transitions</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#immutability-and-human-in-the-loop"><strong>16. Immutability and Human-in-the-Loop</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-design-principles"><strong>17. Key Design Principles</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-other-paradigms"><strong>18. Comparison with Other Paradigms</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration"><strong>Demonstration</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-basic-immutable-state-update"><strong>Example 1: Basic Immutable State Update</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-immutable-list-operations-with-reducers"><strong>Example 2: Immutable List Operations with Reducers</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-3-immutable-nested-data-structures"><strong>Example 3: Immutable Nested Data Structures</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-4-checkpoint-consistency-with-immutability"><strong>Example 4: Checkpoint Consistency with Immutability</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-5-preventing-mutation-bugs"><strong>Example 5: Preventing Mutation Bugs</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-6-custom-immutable-reducer-for-complex-merging"><strong>Example 6: Custom Immutable Reducer for Complex Merging</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-7-functional-purity-and-reproducibility"><strong>Example 7: Functional Purity and Reproducibility</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaways"><strong>Key Takeaways</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices-summary"><strong>Best Practices Summary</strong></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By svgoudar
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

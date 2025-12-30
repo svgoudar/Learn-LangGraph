@@ -1,0 +1,1328 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Tracing &#8212; Machine Learning Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-examples.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../_static/tabs.js"></script>
+    <script src="../../_static/js/hoverxref.js"></script>
+    <script src="../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../_static/js/micromodal.min.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"tex": {"macros": {"N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'langgraph/11-observability-operations/01-tracing';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Metrics" href="02-metrics.html" />
+    <link rel="prev" title="Logging" href="00-logging.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Machine Learning Handbook - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Machine Learning Handbook - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    LangGraph Tutorial
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../1-graph-execution-model/overview.html">Graph Execution Model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/00-intr.html">LangGraph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/01-graph.html">Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/02-directed-graph.html">Directed Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/03-state-machine.html">State Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/04-cyclic-graph.html">Cyclic Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/05-conditional-graph.html">Conditional Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/06-dynamic-graph.html">Dynamic Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/07-deterministic-execution.html">Deterministic Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/08-non-deterministic-execution.html">Non-Deterministic Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/09-entry-node.html">Entry Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/10-exit-node.html">Exit Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/11-terminal-node.html">Terminal Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/12-start-symbol.html">Start Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/13-end-symbol.html">END Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/14-compilation.html">Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/15-execution-plan.html">Execution Plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/16-execution-engine.html">Execution Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/17-step-scheduler.html">Step Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/18-task-scheduler.html">Task Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/19-execution-context.html">Execution Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/20-execution-thread.html"><strong>Execution Thread in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/21-execution-run.html"><strong>Execution Run in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/22-thread-id.html">Thread ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/23-session.html">Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/24-run-id.html">Run ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/25-invocation.html">Invocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/26-resume.html">Resume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/27-interrupt.html">Interrupt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/28-cancel.html">Cancel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/29-timeout.html">Timeout</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../2-state-data-management/overview.html">State &amp; Data Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/00-global-state.html">Global State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/01-local-node-state.html"><strong>Local Node State in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/02-typed-state-schema.html">Typed State Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/03-state-validation.html">State Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/04-state-reducers.html">State Reducers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/05-partial-state-updates.html">Partial State Updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/06-immutable-state-transitions.html">Immutable State Transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/07-state-versioning.html"><strong>State Versioning in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/08-state-diff.html">State Diff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/09-state-persistence.html">State Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/10-state-serialization.html">State Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/11-state-deserialization.html">State Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/12-state-checkpoint.html"><strong>State Checkpointing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/13-snapshot.html"><strong>Snapshot in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/14-replay.html"><strong>Replay in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/15-rollback.html"><strong>Rollback in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/16-state-migration.html"><strong>State Migration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/17-state-recovery.html">State Recovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/18-thread-persistence.html">Thread Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/19-memory-store.html"><strong>Memory Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/20-short-term-memory.html">Short-Term Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/21-long-term-memory.html"><strong>Long-Term Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/22-external-memory.html"><strong>External Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/23-conversation-state.html"><strong>Conversation State in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/24-tool-state.html">Tool State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/25-metadata-state.html"><strong>Metadata State in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../3-nodes/overview.html">Nodes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/00-node.html">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/01-node-handler.html"><strong>Node Handler in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/02-node-executor.html"><strong>Node Executor in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/03-llm-node.html"><strong>LLM Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/04-tool-node.html"><strong>Tool Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/05-function-node.html"><strong>Function Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/06-router-node.html"><strong>Router Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/07-conditional-node.html"><strong>Conditional Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/08-human-node.html"><strong>Human Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/09-approval-node.html"><strong>Approval Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/10-review-node.html"><strong>Review Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/11-agent-node.html"><strong>Agent Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/12-subgraph-node.html"><strong>Subgraph Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/13-composite-node.html">Composite Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/14-async-node.html">Async Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/15-streaming-node.html"><strong>Streaming Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/16-batch-node.html"><strong>Batch Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/17-fallback-node.html"><strong>Fallback Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/18-error-node.html"><strong>Error Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/19-retry-node.html"><strong>Retry Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/20-timeout-node.html"><strong>Timeout Node in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../4-edges-control-flow/overview.html">Edges &amp; Control Flow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/00-edge.html">Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/01-conditional-edge.html">Conditional Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/02-dynamic-edge.html"><strong>Dynamic Edge in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/03-static-edge.html">Static Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/04-cyclic-edge.html"><strong>Demonstration — Static Edge Pipeline in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/05-loop.html"><strong>Loop in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/06-branch.html">Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/07-fan-out.html">Fan-Out</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/08-fan-in.html"><strong>Fan-In in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/09-join.html"><strong>Join in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/10-merge.html">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/11-split.html"><strong>Split in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/12-gate.html"><strong>Gate in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/13-barrier.html">Barrier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/14-semaphore.html">Semaphore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/15-priority-routing.html"><strong>Priority Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/16-load-based-routing.html"><strong>Load-Based Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/17-data-driven-routing.html"><strong>Data-Driven Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/18-event-driven-routing.html">Event-Driven Routing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../5-multi-agent-systems/overview.html">Multi-Agent Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/00-agent.html"><strong>Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/01-agent-role.html"><strong>Agent Role in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/02-supervisor-agent.html"><strong>Supervisor Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/03-worker-agent.html"><strong>Worker Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/04-planner-agent.html"><strong>Planner Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/05-executor-agent.html"><strong>Executor Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/06-critic-agent.html"><strong>Critic Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/07-reviewer-agent.html"><strong>Reviewer Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/08-tool-using-agent.html"><strong>Tool-Using Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/09-collaborative-agents.html"><strong>Collaborative Agents in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/10-autonomous-agents.html"><strong>Autonomous Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/11-delegation.html"><strong>Delegation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/12-coordination.html"><strong>Coordination in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/13-negotiation.html"><strong>Negotiation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/14-arbitration.html"><strong>Arbitration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/15-consensus.html"><strong>Consensus in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/16-debate.html"><strong>Debate Pattern in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/17-agent-memory.html"><strong>Agent Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/18-agent-communication.html"><strong>Agent Communication in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/19-agent-protocols.html"><strong>Agent Protocol in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/20-message-passing.html"><strong>Message Passing in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../6-human-in-the-loop/overview.html">Human-in-the-Loop</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/00-human-approval.html"><strong>Human Approval in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/01-manual-intervention.html"><strong>Manual Intervention in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/02-review-gate.html"><strong>Review Gate in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/03-correction-injection.html"><strong>Correction Injection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/04-override.html"><strong>Override in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/05-step-through-execution.html"><strong>Step-Thought Execution in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/06-interactive-debugging.html"><strong>Interactive Debugging in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/07-live-state-inspection.html"><strong>Live State Inspection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/08-human-feedback.html"><strong>Human Feedback in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/09-reinforcement-feedback.html"><strong>Reinforcement Feedback in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../7-tool-llm-integration/overview.html">Tool &amp; LLM Integration</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/00-llm-invocation.html">LLM Invocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/01-prompt-template.html">Prompt Template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/02-prompt-routing.html"><strong>Prompt Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/03-tool-calling.html"><strong>Tool Calling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/04-tool-binding.html"><strong>Tool Binding in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/05-tool-registry.html">Tool Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/06-tool-selection.html"><strong>Tool Selection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/07-tool-policies.html"><strong>Tool Policies in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/08-model-selection.html">Model Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/09-model-routing.html">Model Routing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/10-multi-model-orchestration.html">Multi-Model Orchestration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/11-streaming-tokens.html"><strong>Streaming Tokens in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/12-token-budgeting.html"><strong>Token Budgeting in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/13-cost-tracking.html"><strong>Cost Tracking in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../8-memory-persistence/overview.html">Memory &amp; Persistence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/00-checkpoint-store.html"><strong>Checkpoint Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/01-state-store.html"><strong>State Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/02-vector-store.html"><strong>Vector Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/03-cache.html"><strong>Cache in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/04-session-store.html"><strong>Session Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/05-event-store.html"><strong>Event Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/06-audit-log.html"><strong>Audit Log in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/07-execution-log.html"><strong>Execution Log in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/08-trace-log.html"><strong>Trace Log in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../9-reliability-fault-tolerance/overview.html">Reliability &amp; Fault Tolerance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/00-error-handling.html"><strong>Error Handling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/01-exception-capture.html"><strong>Exception Capture in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/02-retry-policy.html"><strong>Exception &amp; Retry Policy in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/03-backoff-strategy.html"><strong>Exception Backoff in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/04-circuit-breaker.html"><strong>Exception &amp; Circuit Breaker in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/05-failover.html"><strong>Exception Failover in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/06-recovery-strategy.html"><strong>Recovery Strategy in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/07-idempotency.html"><strong>Idempotency in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/08-deduplication.html"><strong>Deduplication in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/09-dead-letter-queue.html">Dead Letter Queue (DLQ)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/10-compensating-actions.html"><strong>Compensating Action in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/11-graceful-degradation.html"><strong>Graceful Degradation in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../10-performance-scalability/overview.html">Performance &amp; Scalability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/00-async-execution.html">Async Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/01-parallel-execution.html">Parallel Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/02-concurrency-control.html">Concurrency Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/03-thread-pool.html">Thread Pool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/04-worker-pool.html">Worker Pool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/05-load-balancing.html">Load Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/06-horizontal-scaling.html">Horizontal Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/07-vertical-scaling.html">Vertical Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/08-throughput-optimization.html">Throughput Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/10-memory-optimization.html">Latency Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/11-cost-optimization.html">Cost Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/12-cold-start-handling.html">Cold Start Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/13-warm-start.html">Warm Start</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Observability &amp; Operations</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00-logging.html">Logging</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-metrics.html">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-monitoring.html">Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-alerting.html">Alerting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-debug-mode.html">Debug Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-replay-mode.html">Replay Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07-visualization.html">Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08-graph-viewer.html">Graph Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09-execution-timeline.html">Execution Timeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10-performance-profiling.html">Performance Profiling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../12-security-governance/overview.html">Security &amp; Governance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/00-authentication.html">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/01-authorization.html">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/02-role-based-access-control.html"><strong>Role-Based Access Control (RBAC) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/03-secrets-management.html">Secret Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/04-data-encryption.html">Data Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/05-secure-state-storage.html">Secure State Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/06-audit-trails.html">Audit Trails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/07-compliance.html">Compliance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/08-policy-enforcement.html">Policy Enforcement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/09-prompt-safety.html">Prompt Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/10-tool-sandboxing.html">Tool Sandboxing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../13-deployment-production-architecture/overview.html">Deployment &amp; Production Architecture</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/00-local-runtime.html">Local Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/01-cloud-runtime.html">Cloud Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/02-distributed-runtime.html">Distributed Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/03-containerization.html">Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/04-orchestration-kubernetes.html">Orchestration with Kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/05-cicd-integration.html">CI/CD Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/06-blue-green-deployment.html">Demonstration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/07-canary-deployment.html">Canary Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/08-versioned-graphs.html">Versioned Graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/09-rollout-strategy.html">Rollout Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/10-rollback-strategy.html">Rollback Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/11-environment-isolation.html">Environment Isolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/12-multi-tenant-execution.html">Multi-Tenant Execution</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../14-advanced-design-patterns/overview.html">Advanced Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/00-react-loop.html">ReAct Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/01-planner-executor.html">Planner–Executor Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/02-reflection-loop.html">Reflection Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/03-self-correction-loop.html">Self-Correction Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/04-map-reduce.html">Map–Reduce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/05-tree-of-thoughts.html">Tree of Thought (ToT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/06-chain-of-thought-control.html">Chain of Thought</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/07-debate-consensus.html">Debate–Consensus Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/08-multi-step-pipelines.html">Multi-Step Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/09-event-driven-workflow.html">Event-Driven Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/10-self-healing-graph.html">Self-Healing Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/11-autonomous-workflow.html">Autonomous Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/12-swarm-architecture.html"><strong>SWARM Architecture in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../15-developer-experience/overview.html">Developer Experience</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/00-graph-builder.html">Graph Builder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/01-visual-editor.html">Visual Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/02-dsl.html"><strong>Domain-Specific Language (DSL) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/03-configuration-management.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/04-environment-config.html"><strong>Environment Configuration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/05-hot-reload.html">Hot Reload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/06-testing-framework.html"><strong>Testing Framework in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/07-unit-tests.html">Unit Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/08-integration-tests.html">Integration Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/09-simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/10-mocking.html">Mocking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/11-staging-environment.html">Staging Environment</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/svgoudar/Learn-LangGraph/blob/master/langgraph/11-observability-operations/01-tracing.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/svgoudar/Learn-LangGraph" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/svgoudar/Learn-LangGraph/issues/new?title=Issue%20on%20page%20%2Flanggraph/11-observability-operations/01-tracing.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/langgraph/11-observability-operations/01-tracing.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Tracing</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-tracing-is-essential"><strong>1. Why Tracing Is Essential</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-gets-traced"><strong>2. What Gets Traced</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracing-architecture"><strong>3. Tracing Architecture</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enabling-tracing"><strong>4. Enabling Tracing</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-setup">Environment Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-tracing-example">Basic Tracing Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trace-data-model"><strong>5. Trace Data Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-traces-langsmith"><strong>6. Visualizing Traces (LangSmith)</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-tracing"><strong>7. Custom Tracing</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production-use-cases"><strong>8. Production Use Cases</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-features"><strong>9. Advanced Features</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices"><strong>10. Best Practices</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model"><strong>Mental Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration">Demonstration</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#tracing" id="id1">Tracing</a></p>
+<ul>
+<li><p><a class="reference internal" href="#why-tracing-is-essential" id="id2"><strong>1. Why Tracing Is Essential</strong></a></p></li>
+<li><p><a class="reference internal" href="#what-gets-traced" id="id3"><strong>2. What Gets Traced</strong></a></p></li>
+<li><p><a class="reference internal" href="#tracing-architecture" id="id4"><strong>3. Tracing Architecture</strong></a></p></li>
+<li><p><a class="reference internal" href="#enabling-tracing" id="id5"><strong>4. Enabling Tracing</strong></a></p></li>
+<li><p><a class="reference internal" href="#environment-setup" id="id6">Environment Setup</a></p></li>
+<li><p><a class="reference internal" href="#basic-tracing-example" id="id7">Basic Tracing Example</a></p></li>
+<li><p><a class="reference internal" href="#trace-data-model" id="id8"><strong>5. Trace Data Model</strong></a></p></li>
+<li><p><a class="reference internal" href="#visualizing-traces-langsmith" id="id9"><strong>6. Visualizing Traces (LangSmith)</strong></a></p></li>
+<li><p><a class="reference internal" href="#custom-tracing" id="id10"><strong>7. Custom Tracing</strong></a></p></li>
+<li><p><a class="reference internal" href="#production-use-cases" id="id11"><strong>8. Production Use Cases</strong></a></p></li>
+<li><p><a class="reference internal" href="#advanced-features" id="id12"><strong>9. Advanced Features</strong></a></p></li>
+<li><p><a class="reference internal" href="#best-practices" id="id13"><strong>10. Best Practices</strong></a></p></li>
+<li><p><a class="reference internal" href="#mental-model" id="id14"><strong>Mental Model</strong></a></p></li>
+<li><p><a class="reference internal" href="#demonstration" id="id15">Demonstration</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="tracing">
+<h1><a class="toc-backref" href="#id1">Tracing</a><a class="headerlink" href="#tracing" title="Permalink to this heading">#</a></h1>
+<p><strong>Tracing</strong> in LangGraph is the systematic capture of <strong>execution events, state transitions, decisions, tool calls, and model interactions</strong> during the runtime of a graph.
+It enables <strong>observability, debugging, performance analysis, auditing, and governance</strong> of complex LLM workflows.</p>
+<p>LangGraph tracing is built on <strong>LangChain’s callback system</strong> and integrates natively with <strong>LangSmith</strong>.</p>
+<hr class="docutils" />
+<section id="why-tracing-is-essential">
+<h2><a class="toc-backref" href="#id2"><strong>1. Why Tracing Is Essential</strong></a><a class="headerlink" href="#why-tracing-is-essential" title="Permalink to this heading">#</a></h2>
+<p>LLM systems are:</p>
+<ul class="simple">
+<li><p>Non-deterministic</p></li>
+<li><p>Multi-step</p></li>
+<li><p>Stateful</p></li>
+<li><p>Distributed</p></li>
+<li><p>Autonomous</p></li>
+</ul>
+<p>Without tracing, failures are <strong>invisible</strong> and optimization is <strong>guesswork</strong>.</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Capability</p></th>
+<th class="head"><p>Without Tracing</p></th>
+<th class="head"><p>With Tracing</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Debugging</p></td>
+<td><p>Blind</p></td>
+<td><p>Deterministic</p></td>
+</tr>
+<tr class="row-odd"><td><p>Performance</p></td>
+<td><p>Unknown</p></td>
+<td><p>Measured</p></td>
+</tr>
+<tr class="row-even"><td><p>Compliance</p></td>
+<td><p>Impossible</p></td>
+<td><p>Auditable</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cost control</p></td>
+<td><p>Untracked</p></td>
+<td><p>Precise</p></td>
+</tr>
+<tr class="row-even"><td><p>Safety</p></td>
+<td><p>Unverifiable</p></td>
+<td><p>Enforced</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="what-gets-traced">
+<h2><a class="toc-backref" href="#id3"><strong>2. What Gets Traced</strong></a><a class="headerlink" href="#what-gets-traced" title="Permalink to this heading">#</a></h2>
+<p>LangGraph emits structured events at each execution stage.</p>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Traced Elements</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Graph</p></td>
+<td><p>Node entry/exit, edge traversal</p></td>
+</tr>
+<tr class="row-odd"><td><p>State</p></td>
+<td><p>State diffs, versions</p></td>
+</tr>
+<tr class="row-even"><td><p>LLM</p></td>
+<td><p>Prompts, responses, tokens</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tools</p></td>
+<td><p>Inputs, outputs, latency</p></td>
+</tr>
+<tr class="row-even"><td><p>Routing</p></td>
+<td><p>Branch decisions</p></td>
+</tr>
+<tr class="row-odd"><td><p>Errors</p></td>
+<td><p>Exceptions, retries</p></td>
+</tr>
+<tr class="row-even"><td><p>Timing</p></td>
+<td><p>Latency per node</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cost</p></td>
+<td><p>Token usage, cost per run</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="tracing-architecture">
+<h2><a class="toc-backref" href="#id4"><strong>3. Tracing Architecture</strong></a><a class="headerlink" href="#tracing-architecture" title="Permalink to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>LangGraph Runtime
+   |
+Callback Manager
+   |
+Tracer (LangSmith / Custom)
+   |
+Trace Store → UI / Analytics / Alerts
+</pre></div>
+</div>
+<p>Each run receives a unique <strong>Run ID</strong> and <strong>Thread ID</strong>.</p>
+</section>
+<hr class="docutils" />
+<section id="enabling-tracing">
+<h2><a class="toc-backref" href="#id5"><strong>4. Enabling Tracing</strong></a><a class="headerlink" href="#enabling-tracing" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="environment-setup">
+<h2><a class="toc-backref" href="#id6">Environment Setup</a><a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">LANGCHAIN_TRACING_V2</span><span class="o">=</span><span class="nb">true</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">LANGCHAIN_API_KEY</span><span class="o">=</span>your_key
+</pre></div>
+</div>
+</section>
+<section id="basic-tracing-example">
+<h2><a class="toc-backref" href="#id7">Basic Tracing Example</a><a class="headerlink" href="#basic-tracing-example" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langchain.callbacks.tracers</span><span class="w"> </span><span class="kn">import</span> <span class="n">LangChainTracer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain.callbacks.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallbackManager</span>
+
+<span class="n">tracer</span> <span class="o">=</span> <span class="n">LangChainTracer</span><span class="p">()</span>
+<span class="n">callback_manager</span> <span class="o">=</span> <span class="n">CallbackManager</span><span class="p">([</span><span class="n">tracer</span><span class="p">])</span>
+
+<span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="n">callback_manager</span><span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="trace-data-model">
+<h2><a class="toc-backref" href="#id8"><strong>5. Trace Data Model</strong></a><a class="headerlink" href="#trace-data-model" title="Permalink to this heading">#</a></h2>
+<p>Each trace forms a <strong>hierarchical execution tree</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Graph Run
+ ├─ Node: reason
+ │   ├─ LLM Call
+ │   └─ Tool Call
+ ├─ Node: act
+ └─ Node: observe
+</pre></div>
+</div>
+<p>Each node contains:</p>
+<ul class="simple">
+<li><p>Inputs</p></li>
+<li><p>Outputs</p></li>
+<li><p>State before/after</p></li>
+<li><p>Timing</p></li>
+<li><p>Cost</p></li>
+<li><p>Metadata</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="visualizing-traces-langsmith">
+<h2><a class="toc-backref" href="#id9"><strong>6. Visualizing Traces (LangSmith)</strong></a><a class="headerlink" href="#visualizing-traces-langsmith" title="Permalink to this heading">#</a></h2>
+<p>LangSmith UI provides:</p>
+<ul class="simple">
+<li><p>Timeline view</p></li>
+<li><p>Node execution tree</p></li>
+<li><p>Token &amp; cost dashboard</p></li>
+<li><p>Failure inspection</p></li>
+<li><p>State diff viewer</p></li>
+<li><p>Reproducible runs</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="custom-tracing">
+<h2><a class="toc-backref" href="#id10"><strong>7. Custom Tracing</strong></a><a class="headerlink" href="#custom-tracing" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyTracer</span><span class="p">(</span><span class="n">BaseCallbackHandler</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chain_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">serialized</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;START:&quot;</span><span class="p">,</span> <span class="n">serialized</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_chain_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;END:&quot;</span><span class="p">,</span> <span class="n">outputs</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">MyTracer</span><span class="p">()]})</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="production-use-cases">
+<h2><a class="toc-backref" href="#id11"><strong>8. Production Use Cases</strong></a><a class="headerlink" href="#production-use-cases" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Use Case</p></th>
+<th class="head"><p>How Tracing Helps</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Debugging</p></td>
+<td><p>Identify faulty node</p></td>
+</tr>
+<tr class="row-odd"><td><p>Cost optimization</p></td>
+<td><p>Find expensive steps</p></td>
+</tr>
+<tr class="row-even"><td><p>Safety audits</p></td>
+<td><p>Verify tool usage</p></td>
+</tr>
+<tr class="row-odd"><td><p>Compliance</p></td>
+<td><p>Immutable execution logs</p></td>
+</tr>
+<tr class="row-even"><td><p>Performance tuning</p></td>
+<td><p>Detect slow components</p></td>
+</tr>
+<tr class="row-odd"><td><p>Incident response</p></td>
+<td><p>Replay failures</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="advanced-features">
+<h2><a class="toc-backref" href="#id12"><strong>9. Advanced Features</strong></a><a class="headerlink" href="#advanced-features" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Trace replay</p></td>
+<td><p>Reproduce failures</p></td>
+</tr>
+<tr class="row-odd"><td><p>State diffing</p></td>
+<td><p>Inspect data evolution</p></td>
+</tr>
+<tr class="row-even"><td><p>Span correlation</p></td>
+<td><p>Distributed tracing</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sampling</p></td>
+<td><p>Reduce trace volume</p></td>
+</tr>
+<tr class="row-even"><td><p>Alert hooks</p></td>
+<td><p>Trigger on anomalies</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="best-practices">
+<h2><a class="toc-backref" href="#id13"><strong>10. Best Practices</strong></a><a class="headerlink" href="#best-practices" title="Permalink to this heading">#</a></h2>
+<ul class="simple">
+<li><p>Trace <strong>every production run</strong></p></li>
+<li><p>Store traces immutably</p></li>
+<li><p>Alert on error patterns</p></li>
+<li><p>Track cost per node</p></li>
+<li><p>Use trace replay for debugging</p></li>
+<li><p>Correlate traces with user sessions</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="mental-model">
+<h2><a class="toc-backref" href="#id14"><strong>Mental Model</strong></a><a class="headerlink" href="#mental-model" title="Permalink to this heading">#</a></h2>
+<p>Tracing turns LangGraph from a black box into a <strong>fully observable distributed system</strong>, where every decision, cost, and failure is measurable and controllable.</p>
+</section>
+<section id="demonstration">
+<h2><a class="toc-backref" href="#id15">Demonstration</a><a class="headerlink" href="#demonstration" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ===== 1. Enable Tracing =====</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LANGCHAIN_TRACING_V2&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LANGCHAIN_PROJECT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;langgraph-tracing-demo&quot;</span>
+<span class="c1"># os.environ[&quot;LANGCHAIN_API_KEY&quot;] = &quot;YOUR_API_KEY&quot;   # set once in your system</span>
+
+<span class="c1"># ===== 2. Build a Simple Cyclic LangGraph =====</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatOpenAI</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_classic.callbacks.tracers</span><span class="w"> </span><span class="kn">import</span> <span class="n">LangChainTracer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_classic.callbacks.manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">CallbackManager</span>
+
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatOpenAI</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-4o-mini&quot;</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">question</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">step</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">reason</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Answer briefly: </span><span class="si">{</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;question&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;answer&quot;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">check</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">END</span> <span class="k">if</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">&quot;reason&quot;</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">State</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;reason&quot;</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;check&quot;</span><span class="p">,</span> <span class="n">check</span><span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;reason&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;reason&quot;</span><span class="p">,</span> <span class="s2">&quot;check&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_conditional_edges</span><span class="p">(</span><span class="s2">&quot;check&quot;</span><span class="p">,</span> <span class="n">check</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;reason&quot;</span><span class="p">:</span> <span class="s2">&quot;reason&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">:</span> <span class="n">END</span><span class="p">})</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="c1"># ===== 3. Attach Tracer =====</span>
+<span class="n">tracer</span> <span class="o">=</span> <span class="n">LangChainTracer</span><span class="p">()</span>
+<span class="n">callback_manager</span> <span class="o">=</span> <span class="n">CallbackManager</span><span class="p">([</span><span class="n">tracer</span><span class="p">])</span>
+
+<span class="c1"># ===== 4. Invoke Graph with Tracing =====</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="s2">&quot;What is LangGraph?&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="n">callback_manager</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final Output:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\sangouda\Python3.1210\Lib\site-packages\langsmith\client.py:297: LangSmithMissingAPIKeyWarning: API key must be provided when using hosted LangSmith API
+  warnings.warn(
+Failed to multipart ingest runs: langsmith.utils.LangSmithAuthError: Authentication failed for https://api.smith.langchain.com/runs/multipart. HTTPError(&#39;401 Client Error: Unauthorized for url: https://api.smith.langchain.com/runs/multipart&#39;, &#39;{&quot;error&quot;:&quot;Unauthorized&quot;}\n&#39;)trace=019b6df8-7894-7791-a4be-b4fc7ac04b95,id=019b6df8-7894-7791-a4be-b4fc7ac04b95; trace=019b6df8-7b5e-7653-994b-3d69ecaf4742,id=019b6df8-7b5e-7653-994b-3d69ecaf4742
+</pre></div>
+</div>
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
+<span class="ne">InvalidUpdateError</span><span class="g g-Whitespace">                        </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">43</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span> <span class="n">callback_manager</span> <span class="o">=</span> <span class="n">CallbackManager</span><span class="p">([</span><span class="n">tracer</span><span class="p">])</span>
+<span class="g g-Whitespace">     </span><span class="mi">42</span> <span class="c1"># ===== 4. Invoke Graph with Tracing =====</span>
+<span class="ne">---&gt; </span><span class="mi">43</span> <span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">44</span>     <span class="p">{</span><span class="s2">&quot;question&quot;</span><span class="p">:</span> <span class="s2">&quot;What is LangGraph?&quot;</span><span class="p">,</span> <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+<span class="g g-Whitespace">     </span><span class="mi">45</span>     <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;callbacks&quot;</span><span class="p">:</span> <span class="n">callback_manager</span><span class="p">}</span>
+<span class="g g-Whitespace">     </span><span class="mi">46</span> <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">48</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final Output:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\pregel\main.py:3068,</span> in <span class="ni">Pregel.invoke</span><span class="nt">(self, input, config, context, stream_mode, print_mode, output_keys, interrupt_before, interrupt_after, durability, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">3065</span> <span class="n">chunks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="g g-Whitespace">   </span><span class="mi">3066</span> <span class="n">interrupts</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Interrupt</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="ne">-&gt; </span><span class="mi">3068</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">3069</span>     <span class="nb">input</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3070</span>     <span class="n">config</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3071</span>     <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3072</span>     <span class="n">stream_mode</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;updates&quot;</span><span class="p">,</span> <span class="s2">&quot;values&quot;</span><span class="p">]</span>
+<span class="g g-Whitespace">   </span><span class="mi">3073</span>     <span class="k">if</span> <span class="n">stream_mode</span> <span class="o">==</span> <span class="s2">&quot;values&quot;</span>
+<span class="g g-Whitespace">   </span><span class="mi">3074</span>     <span class="k">else</span> <span class="n">stream_mode</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3075</span>     <span class="n">print_mode</span><span class="o">=</span><span class="n">print_mode</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3076</span>     <span class="n">output_keys</span><span class="o">=</span><span class="n">output_keys</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3077</span>     <span class="n">interrupt_before</span><span class="o">=</span><span class="n">interrupt_before</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3078</span>     <span class="n">interrupt_after</span><span class="o">=</span><span class="n">interrupt_after</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3079</span>     <span class="n">durability</span><span class="o">=</span><span class="n">durability</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3080</span>     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">3081</span> <span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">3082</span>     <span class="k">if</span> <span class="n">stream_mode</span> <span class="o">==</span> <span class="s2">&quot;values&quot;</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">3083</span>         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\pregel\main.py:2643,</span> in <span class="ni">Pregel.stream</span><span class="nt">(self, input, config, context, stream_mode, print_mode, output_keys, interrupt_before, interrupt_after, durability, subgraphs, debug, **kwargs)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2641</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="n">loop</span><span class="o">.</span><span class="n">match_cached_writes</span><span class="p">():</span>
+<span class="g g-Whitespace">   </span><span class="mi">2642</span>     <span class="n">loop</span><span class="o">.</span><span class="n">output_writes</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">task</span><span class="o">.</span><span class="n">writes</span><span class="p">,</span> <span class="n">cached</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">2643</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">tick</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">2644</span>     <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">loop</span><span class="o">.</span><span class="n">tasks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">writes</span><span class="p">],</span>
+<span class="g g-Whitespace">   </span><span class="mi">2645</span>     <span class="n">timeout</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">step_timeout</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2646</span>     <span class="n">get_waiter</span><span class="o">=</span><span class="n">get_waiter</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2647</span>     <span class="n">schedule_task</span><span class="o">=</span><span class="n">loop</span><span class="o">.</span><span class="n">accept_push</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">2648</span> <span class="p">):</span>
+<span class="g g-Whitespace">   </span><span class="mi">2649</span>     <span class="c1"># emit output</span>
+<span class="g g-Whitespace">   </span><span class="mi">2650</span>     <span class="k">yield from</span> <span class="n">_output</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">2651</span>         <span class="n">stream_mode</span><span class="p">,</span> <span class="n">print_mode</span><span class="p">,</span> <span class="n">subgraphs</span><span class="p">,</span> <span class="n">stream</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span>
+<span class="g g-Whitespace">   </span><span class="mi">2652</span>     <span class="p">)</span>
+<span class="g g-Whitespace">   </span><span class="mi">2653</span> <span class="n">loop</span><span class="o">.</span><span class="n">after_tick</span><span class="p">()</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\pregel\_runner.py:167,</span> in <span class="ni">PregelRunner.tick</span><span class="nt">(self, tasks, reraise, timeout, retry_policy, get_waiter, schedule_task)</span>
+<span class="g g-Whitespace">    </span><span class="mi">165</span> <span class="n">t</span> <span class="o">=</span> <span class="n">tasks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="g g-Whitespace">    </span><span class="mi">166</span> <span class="k">try</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">167</span>     <span class="n">run_with_retry</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">168</span>         <span class="n">t</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">169</span>         <span class="n">retry_policy</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">170</span>         <span class="n">configurable</span><span class="o">=</span><span class="p">{</span>
+<span class="g g-Whitespace">    </span><span class="mi">171</span>             <span class="n">CONFIG_KEY_CALL</span><span class="p">:</span> <span class="n">partial</span><span class="p">(</span>
+<span class="g g-Whitespace">    </span><span class="mi">172</span>                 <span class="n">_call</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">173</span>                 <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">174</span>                 <span class="n">retry_policy</span><span class="o">=</span><span class="n">retry_policy</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">175</span>                 <span class="n">futures</span><span class="o">=</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">futures</span><span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">176</span>                 <span class="n">schedule_task</span><span class="o">=</span><span class="n">schedule_task</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">177</span>                 <span class="n">submit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">,</span>
+<span class="g g-Whitespace">    </span><span class="mi">178</span>             <span class="p">),</span>
+<span class="g g-Whitespace">    </span><span class="mi">179</span>         <span class="p">},</span>
+<span class="g g-Whitespace">    </span><span class="mi">180</span>     <span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">181</span>     <span class="bp">self</span><span class="o">.</span><span class="n">commit</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">182</span> <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\pregel\_retry.py:42,</span> in <span class="ni">run_with_retry</span><span class="nt">(task, retry_policy, configurable)</span>
+<span class="g g-Whitespace">     </span><span class="mi">40</span>     <span class="n">task</span><span class="o">.</span><span class="n">writes</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="g g-Whitespace">     </span><span class="mi">41</span>     <span class="c1"># run the task</span>
+<span class="ne">---&gt; </span><span class="mi">42</span>     <span class="k">return</span> <span class="n">task</span><span class="o">.</span><span class="n">proc</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">task</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">43</span> <span class="k">except</span> <span class="n">ParentCommand</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">44</span>     <span class="n">ns</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">CONF</span><span class="p">][</span><span class="n">CONFIG_KEY_CHECKPOINT_NS</span><span class="p">]</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\_internal\_runnable.py:658,</span> in <span class="ni">RunnableSeq.invoke</span><span class="nt">(self, input, config, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">656</span>                 <span class="nb">input</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">invoke</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">657</span>         <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">658</span>             <span class="nb">input</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">659</span> <span class="c1"># finish the root run</span>
+<span class="g g-Whitespace">    </span><span class="mi">660</span> <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\_internal\_runnable.py:400,</span> in <span class="ni">RunnableCallable.invoke</span><span class="nt">(self, input, config, **kwargs)</span>
+<span class="g g-Whitespace">    </span><span class="mi">398</span>         <span class="n">run_manager</span><span class="o">.</span><span class="n">on_chain_end</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">399</span> <span class="k">else</span><span class="p">:</span>
+<span class="ne">--&gt; </span><span class="mi">400</span>     <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">401</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">recurse</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">Runnable</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">402</span>     <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\pregel\_write.py:84,</span> in <span class="ni">ChannelWrite._write</span><span class="nt">(self, input, config)</span>
+<span class="g g-Whitespace">     </span><span class="mi">75</span> <span class="k">def</span><span class="w"> </span><span class="nf">_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">RunnableConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="g g-Whitespace">     </span><span class="mi">76</span>     <span class="n">writes</span> <span class="o">=</span> <span class="p">[</span>
+<span class="g g-Whitespace">     </span><span class="mi">77</span>         <span class="n">ChannelWriteEntry</span><span class="p">(</span><span class="n">write</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">write</span><span class="o">.</span><span class="n">skip_none</span><span class="p">,</span> <span class="n">write</span><span class="o">.</span><span class="n">mapper</span><span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">78</span>         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">write</span><span class="p">,</span> <span class="n">ChannelWriteEntry</span><span class="p">)</span> <span class="ow">and</span> <span class="n">write</span><span class="o">.</span><span class="n">value</span> <span class="ow">is</span> <span class="n">PASSTHROUGH</span>
+   <span class="p">(</span><span class="o">...</span><span class="p">)</span>     <span class="mi">82</span>         <span class="k">for</span> <span class="n">write</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">writes</span>
+<span class="g g-Whitespace">     </span><span class="mi">83</span>     <span class="p">]</span>
+<span class="ne">---&gt; </span><span class="mi">84</span>     <span class="bp">self</span><span class="o">.</span><span class="n">do_write</span><span class="p">(</span>
+<span class="g g-Whitespace">     </span><span class="mi">85</span>         <span class="n">config</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">86</span>         <span class="n">writes</span><span class="p">,</span>
+<span class="g g-Whitespace">     </span><span class="mi">87</span>     <span class="p">)</span>
+<span class="g g-Whitespace">     </span><span class="mi">88</span>     <span class="k">return</span> <span class="nb">input</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\pregel\_write.py:126,</span> in <span class="ni">ChannelWrite.do_write</span><span class="nt">(config, writes, allow_passthrough)</span>
+<span class="g g-Whitespace">    </span><span class="mi">123</span> <span class="c1"># if we want to persist writes found before hitting a ParentCommand</span>
+<span class="g g-Whitespace">    </span><span class="mi">124</span> <span class="c1"># can move this to a finally block</span>
+<span class="g g-Whitespace">    </span><span class="mi">125</span> <span class="n">write</span><span class="p">:</span> <span class="n">TYPE_SEND</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="n">CONF</span><span class="p">][</span><span class="n">CONFIG_KEY_SEND</span><span class="p">]</span>
+<span class="ne">--&gt; </span><span class="mi">126</span> <span class="n">write</span><span class="p">(</span><span class="n">_assemble_writes</span><span class="p">(</span><span class="n">writes</span><span class="p">))</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\pregel\_write.py:181,</span> in <span class="ni">_assemble_writes</span><span class="nt">(writes)</span>
+<span class="g g-Whitespace">    </span><span class="mi">179</span>     <span class="n">tuples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">TASKS</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+<span class="g g-Whitespace">    </span><span class="mi">180</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">ChannelWriteTupleEntry</span><span class="p">):</span>
+<span class="ne">--&gt; </span><span class="mi">181</span>     <span class="k">if</span> <span class="n">ww</span> <span class="o">:=</span> <span class="n">w</span><span class="o">.</span><span class="n">mapper</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+<span class="g g-Whitespace">    </span><span class="mi">182</span>         <span class="n">tuples</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ww</span><span class="p">)</span>
+<span class="g g-Whitespace">    </span><span class="mi">183</span> <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">ChannelWriteEntry</span><span class="p">):</span>
+
+<span class="nn">File ~\Python3.1210\Lib\site-packages\langgraph\graph\state.py:1015,</span> in <span class="ni">CompiledStateGraph.attach_node.&lt;locals&gt;._get_updates</span><span class="nt">(input)</span>
+<span class="g g-Whitespace">   </span><span class="mi">1010</span> <span class="k">else</span><span class="p">:</span>
+<span class="g g-Whitespace">   </span><span class="mi">1011</span>     <span class="n">msg</span> <span class="o">=</span> <span class="n">create_error_message</span><span class="p">(</span>
+<span class="g g-Whitespace">   </span><span class="mi">1012</span>         <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Expected dict, got </span><span class="si">{</span><span class="nb">input</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1013</span>         <span class="n">error_code</span><span class="o">=</span><span class="n">ErrorCode</span><span class="o">.</span><span class="n">INVALID_GRAPH_NODE_RETURN_VALUE</span><span class="p">,</span>
+<span class="g g-Whitespace">   </span><span class="mi">1014</span>     <span class="p">)</span>
+<span class="ne">-&gt; </span><span class="mi">1015</span>     <span class="k">raise</span> <span class="n">InvalidUpdateError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+<span class="ne">InvalidUpdateError</span>: Expected dict, got __end__
+<span class="n">For</span> <span class="n">troubleshooting</span><span class="p">,</span> <span class="n">visit</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">docs</span><span class="o">.</span><span class="n">langchain</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">oss</span><span class="o">/</span><span class="n">python</span><span class="o">/</span><span class="n">langgraph</span><span class="o">/</span><span class="n">errors</span><span class="o">/</span><span class="n">INVALID_GRAPH_NODE_RETURN_VALUE</span>
+<span class="n">During</span> <span class="n">task</span> <span class="k">with</span> <span class="n">name</span> <span class="s1">&#39;check&#39;</span> <span class="ow">and</span> <span class="nb">id</span> <span class="s1">&#39;d7aee411-eeaf-b6a3-4745-03dd200d358d&#39;</span>
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Failed to send compressed multipart ingest: langsmith.utils.LangSmithAuthError: Authentication failed for https://api.smith.langchain.com/runs/multipart. HTTPError(&#39;401 Client Error: Unauthorized for url: https://api.smith.langchain.com/runs/multipart&#39;, &#39;{&quot;error&quot;:&quot;Unauthorized&quot;}\n&#39;)trace=019b6df8-7b5e-7653-994b-3d69ecaf4742,id=019b6df8-7b5e-7653-994b-3d69ecaf4742; trace=019b6df8-7894-7791-a4be-b4fc7ac04b95,id=019b6df8-7894-7791-a4be-b4fc7ac04b95
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "py312env"
+        },
+        kernelOptions: {
+            name: "py312env",
+            path: "./langgraph\11-observability-operations"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'py312env'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="00-logging.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Logging</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="02-metrics.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Metrics</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-tracing-is-essential"><strong>1. Why Tracing Is Essential</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-gets-traced"><strong>2. What Gets Traced</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tracing-architecture"><strong>3. Tracing Architecture</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enabling-tracing"><strong>4. Enabling Tracing</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#environment-setup">Environment Setup</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-tracing-example">Basic Tracing Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trace-data-model"><strong>5. Trace Data Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualizing-traces-langsmith"><strong>6. Visualizing Traces (LangSmith)</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-tracing"><strong>7. Custom Tracing</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production-use-cases"><strong>8. Production Use Cases</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-features"><strong>9. Advanced Features</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#best-practices"><strong>10. Best Practices</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model"><strong>Mental Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration">Demonstration</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By svgoudar
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

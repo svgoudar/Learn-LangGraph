@@ -1,0 +1,1176 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Worker Pool &#8212; Machine Learning Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-examples.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../_static/tabs.js"></script>
+    <script src="../../_static/js/hoverxref.js"></script>
+    <script src="../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../_static/js/micromodal.min.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"tex": {"macros": {"N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'langgraph/10-performance-scalability/04-worker-pool';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Load Balancing" href="05-load-balancing.html" />
+    <link rel="prev" title="Thread Pool" href="03-thread-pool.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Machine Learning Handbook - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Machine Learning Handbook - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    LangGraph Tutorial
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../1-graph-execution-model/overview.html">Graph Execution Model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/00-intr.html">LangGraph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/01-graph.html">Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/02-directed-graph.html">Directed Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/03-state-machine.html">State Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/04-cyclic-graph.html">Cyclic Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/05-conditional-graph.html">Conditional Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/06-dynamic-graph.html">Dynamic Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/07-deterministic-execution.html">Deterministic Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/08-non-deterministic-execution.html">Non-Deterministic Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/09-entry-node.html">Entry Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/10-exit-node.html">Exit Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/11-terminal-node.html">Terminal Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/12-start-symbol.html">Start Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/13-end-symbol.html">END Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/14-compilation.html">Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/15-execution-plan.html">Execution Plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/16-execution-engine.html">Execution Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/17-step-scheduler.html">Step Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/18-task-scheduler.html">Task Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/19-execution-context.html">Execution Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/20-execution-thread.html"><strong>Execution Thread in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/21-execution-run.html"><strong>Execution Run in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/22-thread-id.html">Thread ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/23-session.html">Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/24-run-id.html">Run ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/25-invocation.html">Invocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/26-resume.html">Resume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/27-interrupt.html">Interrupt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/28-cancel.html">Cancel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/29-timeout.html">Timeout</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../2-state-data-management/overview.html">State &amp; Data Management</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/00-global-state.html">Global State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/01-local-node-state.html"><strong>Local Node State in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/02-typed-state-schema.html">Typed State Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/03-state-validation.html">State Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/04-state-reducers.html">State Reducers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/05-partial-state-updates.html">Partial State Updates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/06-immutable-state-transitions.html">Immutable State Transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/07-state-versioning.html"><strong>State Versioning in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/08-state-diff.html">State Diff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/09-state-persistence.html">State Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/10-state-serialization.html">State Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/11-state-deserialization.html">State Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/12-state-checkpoint.html"><strong>State Checkpointing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/13-snapshot.html"><strong>Snapshot in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/14-replay.html"><strong>Replay in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/15-rollback.html"><strong>Rollback in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/16-state-migration.html"><strong>State Migration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/17-state-recovery.html">State Recovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/18-thread-persistence.html">Thread Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/19-memory-store.html"><strong>Memory Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/20-short-term-memory.html">Short-Term Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/21-long-term-memory.html"><strong>Long-Term Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/22-external-memory.html"><strong>External Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/23-conversation-state.html"><strong>Conversation State in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/24-tool-state.html">Tool State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/25-metadata-state.html"><strong>Metadata State in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../3-nodes/overview.html">Nodes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/00-node.html">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/01-node-handler.html"><strong>Node Handler in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/02-node-executor.html"><strong>Node Executor in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/03-llm-node.html"><strong>LLM Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/04-tool-node.html"><strong>Tool Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/05-function-node.html"><strong>Function Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/06-router-node.html"><strong>Router Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/07-conditional-node.html"><strong>Conditional Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/08-human-node.html"><strong>Human Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/09-approval-node.html"><strong>Approval Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/10-review-node.html"><strong>Review Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/11-agent-node.html"><strong>Agent Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/12-subgraph-node.html"><strong>Subgraph Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/13-composite-node.html">Composite Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/14-async-node.html">Async Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/15-streaming-node.html"><strong>Streaming Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/16-batch-node.html"><strong>Batch Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/17-fallback-node.html"><strong>Fallback Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/18-error-node.html"><strong>Error Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/19-retry-node.html"><strong>Retry Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/20-timeout-node.html"><strong>Timeout Node in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../4-edges-control-flow/overview.html">Edges &amp; Control Flow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/00-edge.html">Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/01-conditional-edge.html">Conditional Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/02-dynamic-edge.html"><strong>Dynamic Edge in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/03-static-edge.html">Static Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/04-cyclic-edge.html"><strong>Demonstration — Static Edge Pipeline in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/05-loop.html"><strong>Loop in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/06-branch.html">Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/07-fan-out.html">Fan-Out</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/08-fan-in.html"><strong>Fan-In in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/09-join.html"><strong>Join in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/10-merge.html">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/11-split.html"><strong>Split in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/12-gate.html"><strong>Gate in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/13-barrier.html">Barrier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/14-semaphore.html">Semaphore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/15-priority-routing.html"><strong>Priority Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/16-load-based-routing.html"><strong>Load-Based Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/17-data-driven-routing.html"><strong>Data-Driven Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/18-event-driven-routing.html">Event-Driven Routing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../5-multi-agent-systems/overview.html">Multi-Agent Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/00-agent.html"><strong>Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/01-agent-role.html"><strong>Agent Role in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/02-supervisor-agent.html"><strong>Supervisor Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/03-worker-agent.html"><strong>Worker Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/04-planner-agent.html"><strong>Planner Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/05-executor-agent.html"><strong>Executor Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/06-critic-agent.html"><strong>Critic Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/07-reviewer-agent.html"><strong>Reviewer Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/08-tool-using-agent.html"><strong>Tool-Using Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/09-collaborative-agents.html"><strong>Collaborative Agents in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/10-autonomous-agents.html"><strong>Autonomous Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/11-delegation.html"><strong>Delegation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/12-coordination.html"><strong>Coordination in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/13-negotiation.html"><strong>Negotiation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/14-arbitration.html"><strong>Arbitration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/15-consensus.html"><strong>Consensus in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/16-debate.html"><strong>Debate Pattern in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/17-agent-memory.html"><strong>Agent Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/18-agent-communication.html"><strong>Agent Communication in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/19-agent-protocols.html"><strong>Agent Protocol in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/20-message-passing.html"><strong>Message Passing in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../6-human-in-the-loop/overview.html">Human-in-the-Loop</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/00-human-approval.html"><strong>Human Approval in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/01-manual-intervention.html"><strong>Manual Intervention in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/02-review-gate.html"><strong>Review Gate in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/03-correction-injection.html"><strong>Correction Injection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/04-override.html"><strong>Override in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/05-step-through-execution.html"><strong>Step-Thought Execution in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/06-interactive-debugging.html"><strong>Interactive Debugging in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/07-live-state-inspection.html"><strong>Live State Inspection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/08-human-feedback.html"><strong>Human Feedback in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/09-reinforcement-feedback.html"><strong>Reinforcement Feedback in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../7-tool-llm-integration/overview.html">Tool &amp; LLM Integration</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/00-llm-invocation.html">LLM Invocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/01-prompt-template.html">Prompt Template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/02-prompt-routing.html"><strong>Prompt Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/03-tool-calling.html"><strong>Tool Calling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/04-tool-binding.html"><strong>Tool Binding in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/05-tool-registry.html">Tool Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/06-tool-selection.html"><strong>Tool Selection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/07-tool-policies.html"><strong>Tool Policies in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/08-model-selection.html">Model Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/09-model-routing.html">Model Routing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/10-multi-model-orchestration.html">Multi-Model Orchestration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/11-streaming-tokens.html"><strong>Streaming Tokens in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/12-token-budgeting.html"><strong>Token Budgeting in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/13-cost-tracking.html"><strong>Cost Tracking in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../8-memory-persistence/overview.html">Memory &amp; Persistence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/00-checkpoint-store.html"><strong>Checkpoint Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/01-state-store.html"><strong>State Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/02-vector-store.html"><strong>Vector Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/03-cache.html"><strong>Cache in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/04-session-store.html"><strong>Session Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/05-event-store.html"><strong>Event Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/06-audit-log.html"><strong>Audit Log in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/07-execution-log.html"><strong>Execution Log in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/08-trace-log.html"><strong>Trace Log in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../9-reliability-fault-tolerance/overview.html">Reliability &amp; Fault Tolerance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/00-error-handling.html"><strong>Error Handling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/01-exception-capture.html"><strong>Exception Capture in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/02-retry-policy.html"><strong>Exception &amp; Retry Policy in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/03-backoff-strategy.html"><strong>Exception Backoff in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/04-circuit-breaker.html"><strong>Exception &amp; Circuit Breaker in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/05-failover.html"><strong>Exception Failover in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/06-recovery-strategy.html"><strong>Recovery Strategy in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/07-idempotency.html"><strong>Idempotency in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/08-deduplication.html"><strong>Deduplication in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/09-dead-letter-queue.html">Dead Letter Queue (DLQ)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/10-compensating-actions.html"><strong>Compensating Action in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/11-graceful-degradation.html"><strong>Graceful Degradation in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Performance &amp; Scalability</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00-async-execution.html">Async Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01-parallel-execution.html">Parallel Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-concurrency-control.html">Concurrency Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-thread-pool.html">Thread Pool</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Worker Pool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-load-balancing.html">Load Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-horizontal-scaling.html">Horizontal Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07-vertical-scaling.html">Vertical Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08-throughput-optimization.html">Throughput Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10-memory-optimization.html">Latency Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11-cost-optimization.html">Cost Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12-cold-start-handling.html">Cold Start Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13-warm-start.html">Warm Start</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../11-observability-operations/overview.html">Observability &amp; Operations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/00-logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/01-tracing.html">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/02-metrics.html">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/03-monitoring.html">Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/04-alerting.html">Alerting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/05-debug-mode.html">Debug Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/06-replay-mode.html">Replay Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/07-visualization.html">Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/08-graph-viewer.html">Graph Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/09-execution-timeline.html">Execution Timeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/10-performance-profiling.html">Performance Profiling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../12-security-governance/overview.html">Security &amp; Governance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/00-authentication.html">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/01-authorization.html">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/02-role-based-access-control.html"><strong>Role-Based Access Control (RBAC) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/03-secrets-management.html">Secret Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/04-data-encryption.html">Data Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/05-secure-state-storage.html">Secure State Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/06-audit-trails.html">Audit Trails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/07-compliance.html">Compliance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/08-policy-enforcement.html">Policy Enforcement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/09-prompt-safety.html">Prompt Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/10-tool-sandboxing.html">Tool Sandboxing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../13-deployment-production-architecture/overview.html">Deployment &amp; Production Architecture</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/00-local-runtime.html">Local Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/01-cloud-runtime.html">Cloud Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/02-distributed-runtime.html">Distributed Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/03-containerization.html">Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/04-orchestration-kubernetes.html">Orchestration with Kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/05-cicd-integration.html">CI/CD Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/06-blue-green-deployment.html">Demonstration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/07-canary-deployment.html">Canary Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/08-versioned-graphs.html">Versioned Graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/09-rollout-strategy.html">Rollout Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/10-rollback-strategy.html">Rollback Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/11-environment-isolation.html">Environment Isolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/12-multi-tenant-execution.html">Multi-Tenant Execution</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../14-advanced-design-patterns/overview.html">Advanced Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/00-react-loop.html">ReAct Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/01-planner-executor.html">Planner–Executor Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/02-reflection-loop.html">Reflection Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/03-self-correction-loop.html">Self-Correction Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/04-map-reduce.html">Map–Reduce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/05-tree-of-thoughts.html">Tree of Thought (ToT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/06-chain-of-thought-control.html">Chain of Thought</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/07-debate-consensus.html">Debate–Consensus Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/08-multi-step-pipelines.html">Multi-Step Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/09-event-driven-workflow.html">Event-Driven Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/10-self-healing-graph.html">Self-Healing Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/11-autonomous-workflow.html">Autonomous Workflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/12-swarm-architecture.html"><strong>SWARM Architecture in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../15-developer-experience/overview.html">Developer Experience</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/00-graph-builder.html">Graph Builder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/01-visual-editor.html">Visual Editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/02-dsl.html"><strong>Domain-Specific Language (DSL) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/03-configuration-management.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/04-environment-config.html"><strong>Environment Configuration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/05-hot-reload.html">Hot Reload</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/06-testing-framework.html"><strong>Testing Framework in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/07-unit-tests.html">Unit Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/08-integration-tests.html">Integration Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/09-simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/10-mocking.html">Mocking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/11-staging-environment.html">Staging Environment</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/svgoudar/Learn-LangGraph/blob/master/langgraph/10-performance-scalability/04-worker-pool.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/svgoudar/Learn-LangGraph" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/svgoudar/Learn-LangGraph/issues/new?title=Issue%20on%20page%20%2Flanggraph/10-performance-scalability/04-worker-pool.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/langgraph/10-performance-scalability/04-worker-pool.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Worker Pool</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation"><strong>1. Motivation</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conceptual-model"><strong>2. Conceptual Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture-components"><strong>3. Architecture Components</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-langgraph-uses-worker-pools"><strong>4. How LangGraph Uses Worker Pools</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-parallel-execution-with-worker-pool"><strong>5. Example: Parallel Execution with Worker Pool</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#worker-pool-variants"><strong>6. Worker Pool Variants</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production-grade-features"><strong>7. Production-Grade Features</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-worker-pools"><strong>8. When to Use Worker Pools</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-impact"><strong>9. Performance Impact</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model"><strong>10. Mental Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration">Demonstration</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#worker-pool" id="id1">Worker Pool</a></p>
+<ul>
+<li><p><a class="reference internal" href="#motivation" id="id2"><strong>1. Motivation</strong></a></p></li>
+<li><p><a class="reference internal" href="#conceptual-model" id="id3"><strong>2. Conceptual Model</strong></a></p></li>
+<li><p><a class="reference internal" href="#architecture-components" id="id4"><strong>3. Architecture Components</strong></a></p></li>
+<li><p><a class="reference internal" href="#how-langgraph-uses-worker-pools" id="id5"><strong>4. How LangGraph Uses Worker Pools</strong></a></p></li>
+<li><p><a class="reference internal" href="#example-parallel-execution-with-worker-pool" id="id6"><strong>5. Example: Parallel Execution with Worker Pool</strong></a></p></li>
+<li><p><a class="reference internal" href="#worker-pool-variants" id="id7"><strong>6. Worker Pool Variants</strong></a></p></li>
+<li><p><a class="reference internal" href="#production-grade-features" id="id8"><strong>7. Production-Grade Features</strong></a></p></li>
+<li><p><a class="reference internal" href="#when-to-use-worker-pools" id="id9"><strong>8. When to Use Worker Pools</strong></a></p></li>
+<li><p><a class="reference internal" href="#performance-impact" id="id10"><strong>9. Performance Impact</strong></a></p></li>
+<li><p><a class="reference internal" href="#mental-model" id="id11"><strong>10. Mental Model</strong></a></p></li>
+<li><p><a class="reference internal" href="#demonstration" id="id12">Demonstration</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="worker-pool">
+<h1><a class="toc-backref" href="#id1">Worker Pool</a><a class="headerlink" href="#worker-pool" title="Permalink to this heading">#</a></h1>
+<p>A <strong>Worker Pool</strong> in LangGraph is a <strong>concurrency and scalability mechanism</strong> that allows multiple independent execution units (workers) to process graph tasks in parallel.
+It transforms a single-threaded agent system into a <strong>high-throughput, production-grade distributed execution engine</strong>.</p>
+<hr class="docutils" />
+<section id="motivation">
+<h2><a class="toc-backref" href="#id2"><strong>1. Motivation</strong></a><a class="headerlink" href="#motivation" title="Permalink to this heading">#</a></h2>
+<p>Large LLM workflows require:</p>
+<ul class="simple">
+<li><p>Parallel tool execution</p></li>
+<li><p>Concurrent agent reasoning</p></li>
+<li><p>High throughput for multiple users</p></li>
+<li><p>Fault isolation between tasks</p></li>
+</ul>
+<p>A Worker Pool enables:</p>
+<blockquote>
+<div><p><strong>Scalable, parallel, resilient execution of LangGraph nodes.</strong></p>
+</div></blockquote>
+</section>
+<hr class="docutils" />
+<section id="conceptual-model">
+<h2><a class="toc-backref" href="#id3"><strong>2. Conceptual Model</strong></a><a class="headerlink" href="#conceptual-model" title="Permalink to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Incoming Requests
+        |
+   Graph Scheduler
+        |
+  ┌───────────────┐
+  │  Worker Pool  │
+  └───────────────┘
+   |     |     |
+Worker1 Worker2 Worker3 ...
+   |     |     |
+ Execute Nodes in Parallel
+</pre></div>
+</div>
+<p>Each worker is an <strong>independent execution context</strong> capable of running one or more graph steps.</p>
+</section>
+<hr class="docutils" />
+<section id="architecture-components">
+<h2><a class="toc-backref" href="#id4"><strong>3. Architecture Components</strong></a><a class="headerlink" href="#architecture-components" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Responsibility</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Graph Scheduler</p></td>
+<td><p>Decides which node runs next</p></td>
+</tr>
+<tr class="row-odd"><td><p>Task Queue</p></td>
+<td><p>Holds pending node executions</p></td>
+</tr>
+<tr class="row-even"><td><p>Worker</p></td>
+<td><p>Executes node logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>State Store</p></td>
+<td><p>Shared state persistence</p></td>
+</tr>
+<tr class="row-even"><td><p>Result Collector</p></td>
+<td><p>Merges node outputs</p></td>
+</tr>
+<tr class="row-odd"><td><p>Failure Manager</p></td>
+<td><p>Retries and recovery</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="how-langgraph-uses-worker-pools">
+<h2><a class="toc-backref" href="#id5"><strong>4. How LangGraph Uses Worker Pools</strong></a><a class="headerlink" href="#how-langgraph-uses-worker-pools" title="Permalink to this heading">#</a></h2>
+<p>LangGraph’s runtime schedules node execution based on:</p>
+<ul class="simple">
+<li><p>Graph topology</p></li>
+<li><p>State readiness</p></li>
+<li><p>Conditional routing</p></li>
+<li><p>Parallel branches</p></li>
+</ul>
+<p>Parallel branches are <strong>dispatched to different workers</strong> automatically.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Fan-out → Worker Pool → Fan-in
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="example-parallel-execution-with-worker-pool">
+<h2><a class="toc-backref" href="#id6"><strong>5. Example: Parallel Execution with Worker Pool</strong></a><a class="headerlink" href="#example-parallel-execution-with-worker-pool" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">concurrent.futures</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">a</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">b</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">c</span><span class="p">:</span> <span class="nb">int</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">task1</span><span class="p">(</span><span class="n">state</span><span class="p">):</span> <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">task2</span><span class="p">(</span><span class="n">state</span><span class="p">):</span> <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">task3</span><span class="p">(</span><span class="n">state</span><span class="p">):</span> <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">State</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;t1&quot;</span><span class="p">,</span> <span class="n">task1</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;t2&quot;</span><span class="p">,</span> <span class="n">task2</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;t3&quot;</span><span class="p">,</span> <span class="n">task3</span><span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;t1&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;t1&quot;</span><span class="p">,</span> <span class="s2">&quot;t2&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;t1&quot;</span><span class="p">,</span> <span class="s2">&quot;t3&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;t2&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;t3&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({},</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max_workers&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">t2</span></code> and <code class="docutils literal notranslate"><span class="pre">t3</span></code> are executed <strong>concurrently</strong> by different workers.</p>
+</section>
+<hr class="docutils" />
+<section id="worker-pool-variants">
+<h2><a class="toc-backref" href="#id7"><strong>6. Worker Pool Variants</strong></a><a class="headerlink" href="#worker-pool-variants" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variant</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Thread Pool</p></td>
+<td><p>I/O-bound tasks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Process Pool</p></td>
+<td><p>CPU-heavy computation</p></td>
+</tr>
+<tr class="row-even"><td><p>Async Workers</p></td>
+<td><p>High-concurrency I/O</p></td>
+</tr>
+<tr class="row-odd"><td><p>Distributed Workers</p></td>
+<td><p>Multi-machine scaling</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="production-grade-features">
+<h2><a class="toc-backref" href="#id8"><strong>7. Production-Grade Features</strong></a><a class="headerlink" href="#production-grade-features" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Dynamic Scaling</p></td>
+<td><p>Adjust workers based on load</p></td>
+</tr>
+<tr class="row-odd"><td><p>Backpressure</p></td>
+<td><p>Prevent overload</p></td>
+</tr>
+<tr class="row-even"><td><p>Work Stealing</p></td>
+<td><p>Idle workers take tasks</p></td>
+</tr>
+<tr class="row-odd"><td><p>Retry Policies</p></td>
+<td><p>Fault recovery</p></td>
+</tr>
+<tr class="row-even"><td><p>Timeout Control</p></td>
+<td><p>Prevent hung workers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Isolation</p></td>
+<td><p>Crash containment</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="when-to-use-worker-pools">
+<h2><a class="toc-backref" href="#id9"><strong>8. When to Use Worker Pools</strong></a><a class="headerlink" href="#when-to-use-worker-pools" title="Permalink to this heading">#</a></h2>
+<p>Use worker pools when your graph:</p>
+<ul class="simple">
+<li><p>Has parallel branches</p></li>
+<li><p>Executes expensive tools</p></li>
+<li><p>Runs multi-agent workflows</p></li>
+<li><p>Serves many concurrent users</p></li>
+<li><p>Requires high availability</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="performance-impact">
+<h2><a class="toc-backref" href="#id10"><strong>9. Performance Impact</strong></a><a class="headerlink" href="#performance-impact" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Without Worker Pool</p></th>
+<th class="head"><p>With Worker Pool</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Sequential</p></td>
+<td><p>Parallel</p></td>
+</tr>
+<tr class="row-odd"><td><p>Low throughput</p></td>
+<td><p>High throughput</p></td>
+</tr>
+<tr class="row-even"><td><p>High latency</p></td>
+<td><p>Low latency</p></td>
+</tr>
+<tr class="row-odd"><td><p>Single failure domain</p></td>
+<td><p>Isolated failures</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="mental-model">
+<h2><a class="toc-backref" href="#id11"><strong>10. Mental Model</strong></a><a class="headerlink" href="#mental-model" title="Permalink to this heading">#</a></h2>
+<p>Think of LangGraph as a <strong>distributed operating system for LLM workflows</strong>:</p>
+<ul class="simple">
+<li><p>Graph = Program</p></li>
+<li><p>State = Memory</p></li>
+<li><p>Nodes = Instructions</p></li>
+<li><p>Worker Pool = CPU cores</p></li>
+</ul>
+</section>
+<section id="demonstration">
+<h2><a class="toc-backref" href="#id12">Demonstration</a><a class="headerlink" href="#demonstration" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span><span class="p">,</span> <span class="n">Annotated</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+
+<span class="c1"># ---------- 1. Define Shared State with Reducer ----------</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">results</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">]</span>
+
+<span class="c1"># ---------- 2. Define Start and Parallel Tasks ----------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">state</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">worker_a</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">worker_b</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;B&quot;</span><span class="p">]}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">worker_c</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">collect</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;Collected: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]))</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]}</span>
+
+<span class="c1"># ---------- 3. Build Graph ----------</span>
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">State</span><span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">worker_a</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">worker_b</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="n">worker_c</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;collect&quot;</span><span class="p">,</span> <span class="n">collect</span><span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">)</span>
+
+<span class="c1"># Fan-out: start branches to all workers</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;A&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;B&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">)</span>
+
+<span class="c1"># Fan-in: all workers converge to collect</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="s2">&quot;collect&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="s2">&quot;collect&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;collect&quot;</span><span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;collect&quot;</span><span class="p">,</span> <span class="n">END</span><span class="p">)</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">()</span>
+
+<span class="c1"># ---------- 4. Execute with Worker Pool ----------</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">[]},</span> <span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;max_workers&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>
+
+<span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final State:&quot;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Execution Time:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s2">&quot;seconds&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Final State: {&#39;results&#39;: [&#39;A&#39;, &#39;B&#39;, &#39;C&#39;, &#39;Collected: A, B, C&#39;]}
+Execution Time: 1.39 seconds
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./langgraph\10-performance-scalability"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03-thread-pool.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Thread Pool</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05-load-balancing.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Load Balancing</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#motivation"><strong>1. Motivation</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conceptual-model"><strong>2. Conceptual Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture-components"><strong>3. Architecture Components</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-langgraph-uses-worker-pools"><strong>4. How LangGraph Uses Worker Pools</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#example-parallel-execution-with-worker-pool"><strong>5. Example: Parallel Execution with Worker Pool</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#worker-pool-variants"><strong>6. Worker Pool Variants</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production-grade-features"><strong>7. Production-Grade Features</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-worker-pools"><strong>8. When to Use Worker Pools</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-impact"><strong>9. Performance Impact</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model"><strong>10. Mental Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration">Demonstration</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By svgoudar
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

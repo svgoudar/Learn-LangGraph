@@ -1,0 +1,1173 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Rollback in LangGraph &#8212; Machine Learning Handbook</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" href="../../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-examples.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster.bundle.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-shadow.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-punk.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-noir.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="../../_static/tabs.js"></script>
+    <script src="../../_static/js/hoverxref.js"></script>
+    <script src="../../_static/js/tooltipster.bundle.min.js"></script>
+    <script src="../../_static/js/micromodal.min.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"tex": {"macros": {"N": "\\mathbb{N}", "floor": ["\\lfloor#1\\rfloor", 1], "bmat": ["\\left[\\begin{array}"], "emat": ["\\end{array}\\right]"]}}, "options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'langgraph/2-state-data-management/15-rollback';</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="State Migration in LangGraph" href="16-state-migration.html" />
+    <link rel="prev" title="Replay in LangGraph" href="14-replay.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Machine Learning Handbook - Home"/>
+    <script>document.write(`<img src="../../_static/logo.png" class="logo__image only-dark" alt="Machine Learning Handbook - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../../intro.html">
+                    LangGraph Tutorial
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../1-graph-execution-model/overview.html">Graph Execution Model</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/00-intr.html">LangGraph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/01-graph.html">Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/02-directed-graph.html">Directed Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/03-state-machine.html">State Machine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/04-cyclic-graph.html">Cyclic Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/05-conditional-graph.html">Conditional Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/06-dynamic-graph.html">Dynamic Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/07-deterministic-execution.html">Deterministic Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/08-non-deterministic-execution.html">Non-Deterministic Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/09-entry-node.html">Entry Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/10-exit-node.html">Exit Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/11-terminal-node.html">Terminal Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/12-start-symbol.html">Start Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/13-end-symbol.html">END Symbol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/14-compilation.html">Compilation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/15-execution-plan.html">Execution Plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/16-execution-engine.html">Execution Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/17-step-scheduler.html">Step Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/18-task-scheduler.html">Task Scheduler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/19-execution-context.html">Execution Context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/20-execution-thread.html"><strong>Execution Thread in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/21-execution-run.html"><strong>Execution Run in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/22-thread-id.html">Thread ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/23-session.html">Session</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/24-run-id.html">Run ID</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/25-invocation.html">Invocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/26-resume.html">Resume</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/27-interrupt.html">Interrupt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/28-cancel.html">Cancel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1-graph-execution-model/29-timeout.html">Timeout</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">State &amp; Data Management</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="00-global-state.html">Global State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01-local-node-state.html"><strong>Local Node State in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="02-typed-state-schema.html">Typed State Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03-state-validation.html">State Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04-state-reducers.html"><strong>State Reducers in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="05-partial-state-updates.html"><strong>Partial State Updates in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="06-immutable-state-transitions.html">Immutable State Transitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07-state-versioning.html"><strong>State Versioning in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="08-state-diff.html">State Diff</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09-state-persistence.html">State Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10-state-serialization.html">State Serialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11-state-deserialization.html">State Deserialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12-state-checkpoint.html"><strong>State Checkpointing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="13-snapshot.html"><strong>Snapshot in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="14-replay.html"><strong>Replay in LangGraph</strong></a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#"><strong>Rollback in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="16-state-migration.html"><strong>State Migration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="17-state-recovery.html">State Recovery</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18-thread-persistence.html">Thread Persistence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19-memory-store.html"><strong>Memory Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="20-short-term-memory.html">Short-Term Memory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="21-long-term-memory.html"><strong>Long-Term Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="22-external-memory.html"><strong>External Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="23-conversation-state.html"><strong>Conversation State in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="24-tool-state.html">Tool State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="25-metadata-state.html"><strong>Metadata State in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../3-nodes/overview.html">Nodes</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/00-node.html">Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/01-node-handler.html"><strong>Node Handler in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/02-node-executor.html"><strong>Node Executor in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/03-llm-node.html"><strong>LLM Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/04-tool-node.html"><strong>Tool Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/05-function-node.html"><strong>Function Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/06-router-node.html"><strong>Router Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/07-conditional-node.html"><strong>Conditional Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/08-human-node.html"><strong>Human Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/09-approval-node.html"><strong>Approval Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/10-review-node.html"><strong>Review Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/11-agent-node.html"><strong>Agent Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/12-subgraph-node.html"><strong>Subgraph Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/13-composite-node.html">Composite Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/14-async-node.html">Async Node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/15-streaming-node.html"><strong>Streaming Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/16-batch-node.html"><strong>Batch Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/17-fallback-node.html"><strong>Fallback Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/18-error-node.html"><strong>Error Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/19-retry-node.html"><strong>Retry Node in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3-nodes/20-timeout-node.html"><strong>Timeout Node in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../4-edges-control-flow/overview.html">Edges &amp; Control Flow</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/00-edge.html">Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/01-conditional-edge.html">Conditional Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/02-dynamic-edge.html"><strong>Dynamic Edge in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/03-static-edge.html">Static Edge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/04-cyclic-edge.html"><strong>Demonstration — Static Edge Pipeline in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/05-loop.html"><strong>Loop in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/06-branch.html">Branch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/07-fan-out.html">Fan-Out</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/08-fan-in.html"><strong>Fan-In in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/09-join.html"><strong>Join in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/10-merge.html">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/11-split.html"><strong>Split in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/12-gate.html"><strong>Gate in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/13-barrier.html">Barrier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/14-semaphore.html">Semaphore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/15-priority-routing.html"><strong>Priority Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/16-load-based-routing.html"><strong>Load-Based Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/17-data-driven-routing.html"><strong>Data-Driven Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4-edges-control-flow/18-event-driven-routing.html">Event-Driven Routing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../5-multi-agent-systems/overview.html">Multi-Agent Systems</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/00-agent.html"><strong>Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/01-agent-role.html"><strong>Agent Role in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/02-supervisor-agent.html"><strong>Supervisor Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/03-worker-agent.html"><strong>Worker Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/04-planner-agent.html"><strong>Planner Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/05-executor-agent.html"><strong>Executor Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/06-critic-agent.html"><strong>Critic Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/07-reviewer-agent.html"><strong>Reviewer Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/08-tool-using-agent.html"><strong>Tool-Using Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/09-collaborative-agents.html"><strong>Collaborative Agents in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/10-autonomous-agents.html"><strong>Autonomous Agent in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/11-delegation.html"><strong>Delegation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/12-coordination.html"><strong>Coordination in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/13-negotiation.html"><strong>Negotiation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/14-arbitration.html"><strong>Arbitration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/15-consensus.html"><strong>Consensus in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/16-debate.html"><strong>Debate Pattern in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/17-agent-memory.html"><strong>Agent Memory in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/18-agent-communication.html"><strong>Agent Communication in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/19-agent-protocols.html"><strong>Agent Protocol in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../5-multi-agent-systems/20-message-passing.html"><strong>Message Passing in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../6-human-in-the-loop/overview.html">Human-in-the-Loop</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/00-human-approval.html"><strong>Human Approval in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/01-manual-intervention.html"><strong>Manual Intervention in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/02-review-gate.html"><strong>Review Gate in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/03-correction-injection.html"><strong>Correction Injection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/04-override.html"><strong>Override in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/05-step-through-execution.html"><strong>Step-Thought Execution in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/06-interactive-debugging.html"><strong>Interactive Debugging in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/07-live-state-inspection.html"><strong>Live State Inspection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/08-human-feedback.html"><strong>Human Feedback in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../6-human-in-the-loop/09-reinforcement-feedback.html"><strong>Reinforcement Feedback in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../7-tool-llm-integration/overview.html">Tool &amp; LLM Integration</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/00-llm-invocation.html">LLM Invocation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/01-prompt-template.html">Prompt Template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/02-prompt-routing.html"><strong>Prompt Routing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/03-tool-calling.html"><strong>Tool Calling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/04-tool-binding.html"><strong>Tool Binding in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/05-tool-registry.html">Tool Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/06-tool-selection.html"><strong>Tool Selection in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/07-tool-policies.html"><strong>Tool Policies in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/08-model-selection.html">Model Selection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/09-model-routing.html">Model Routing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/10-multi-model-orchestration.html">Multi-Model Orchestration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/11-streaming-tokens.html"><strong>Streaming Tokens in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/12-token-budgeting.html"><strong>Token Budgeting in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../7-tool-llm-integration/13-cost-tracking.html"><strong>Cost Tracking in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../8-memory-persistence/overview.html">Memory &amp; Persistence</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/00-checkpoint-store.html"><strong>Checkpoint Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/01-state-store.html"><strong>State Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/02-vector-store.html"><strong>Vector Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/03-cache.html"><strong>Cache in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/04-session-store.html"><strong>Session Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/05-event-store.html"><strong>Event Store in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/06-audit-log.html"><strong>Audit Log in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/07-execution-log.html"><strong>Execution Log in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../8-memory-persistence/08-trace-log.html"><strong>Trace Log in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../9-reliability-fault-tolerance/overview.html">Reliability &amp; Fault Tolerance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/00-error-handling.html"><strong>Error Handling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/01-exception-capture.html"><strong>Exception Capture in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/02-retry-policy.html"><strong>Exception &amp; Retry Policy in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/03-backoff-strategy.html"><strong>Exception Backoff in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/04-circuit-breaker.html"><strong>Exception &amp; Circuit Breaker in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/05-failover.html"><strong>Exception Failover in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/06-recovery-strategy.html"><strong>Recovery Strategy in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/07-idempotency.html"><strong>Idempotency in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/08-deduplication.html"><strong>Deduplication in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/09-dead-letter-queue.html">Dead Letter Queue (DLQ)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/10-compensating-actions.html"><strong>Compensating Action in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../9-reliability-fault-tolerance/11-graceful-degradation.html"><strong>Graceful Degradation in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../10-performance-scalability/overview.html">Performance &amp; Scalability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/00-async-execution.html"><strong>Async Execution in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/01-parallel-execution.html">Parallel Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/02-concurrency-control.html"><strong>Concurrency Control in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/03-thread-pool.html"><strong>Thread Pool in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/04-worker-pool.html"><strong>Worker Pool in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/05-load-balancing.html"><strong>Load Balancing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/06-horizontal-scaling.html"><strong>Horizontal Scaling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/07-vertical-scaling.html"><strong>Vertical Scaling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/08-throughput-optimization.html"><strong>Throughput Optimization in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/10-memory-optimization.html"><strong>Latency Optimization in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/11-cost-optimization.html"><strong>Cost Optimization in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/12-cold-start-handling.html"><strong>Cold Start Handling in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/13-warm-start.html"><strong>Warm Start in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../11-observability-operations/overview.html">Observability &amp; Operations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/00-logging.html"><strong>Logging in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/01-tracing.html"><strong>Tracing in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/02-metrics.html"><strong>Metrics in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/03-monitoring.html"><strong>Monitoring in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/04-alerting.html">Alerting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/05-debug-mode.html">Debug Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/06-replay-mode.html">Replay Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/07-visualization.html"><strong>Visualization in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/08-graph-viewer.html"><strong>Graph Viewer in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/09-execution-timeline.html">Execution Timeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/10-performance-profiling.html">Performance Profiling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../12-security-governance/overview.html">Security &amp; Governance</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/00-authentication.html">Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/01-authorization.html">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/02-role-based-access-control.html"><strong>Role-Based Access Control (RBAC) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/03-secrets-management.html"><strong>Secret Management in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/04-data-encryption.html">Data Encryption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/05-secure-state-storage.html"><strong>Secure State Storage in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/06-audit-trails.html">Audit Trails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/07-compliance.html">Compliance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/08-policy-enforcement.html">Policy Enforcement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/09-prompt-safety.html">Prompt Safety</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/10-tool-sandboxing.html">Tool Sandboxing</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../13-deployment-production-architecture/overview.html">Deployment &amp; Production Architecture</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/00-local-runtime.html"><strong>Local Runtime in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/01-cloud-runtime.html">Cloud Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/02-distributed-runtime.html">Distributed Runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/03-containerization.html">Containerization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/04-orchestration-kubernetes.html">Orchestration with Kubernetes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/05-cicd-integration.html">CI/CD Integration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/06-blue-green-deployment.html">Demonstration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/07-canary-deployment.html">Canary Deployment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/08-versioned-graphs.html">Versioned Graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/09-rollout-strategy.html">Rollout Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/10-rollback-strategy.html">Rollback Strategy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/11-environment-isolation.html">Environment Isolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../13-deployment-production-architecture/12-multi-tenant-execution.html">Multi-Tenant Execution</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../14-advanced-design-patterns/overview.html">Advanced Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/00-react-loop.html">ReAct Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/01-planner-executor.html"><strong>Planner–Executor Pattern in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/02-reflection-loop.html"><strong>Reflection Loop in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/03-self-correction-loop.html"><strong>Self-Correction Loop in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/04-map-reduce.html"><strong>Map–Reduce in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/05-tree-of-thoughts.html"><strong>Tree of Thought (ToT) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/06-chain-of-thought-control.html"><strong>Chain of Thought in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/07-debate-consensus.html"><strong>Debate–Consensus Pattern in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/08-multi-step-pipelines.html"><strong>Multi-Step Pipeline in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/09-event-driven-workflow.html"><strong>Event-Driven Workflow in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/10-self-healing-graph.html">Self-Healing Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/11-autonomous-workflow.html"><strong>Autonomous Workflow in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/12-swarm-architecture.html"><strong>SWARM Architecture in LangGraph</strong></a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../15-developer-experience/overview.html">Developer Experience</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/00-graph-builder.html">Graph Builder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/01-visual-editor.html"><strong>Visual Editor in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/02-dsl.html"><strong>Domain-Specific Language (DSL) in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/03-configuration-management.html">Configuration Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/04-environment-config.html"><strong>Environment Configuration in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/05-hot-reload.html"><strong>Hot Reload in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/06-testing-framework.html"><strong>Testing Framework in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/07-unit-tests.html">Unit Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/08-integration-tests.html">Integration Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/09-simulation.html"><strong>Simulation in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/10-mocking.html"><strong>Mocking in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/11-staging-environment.html"><strong>Staging Environment in LangGraph</strong></a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-launch-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Launch interactive content">
+    <i class="fas fa-rocket"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://colab.research.google.com/github/svgoudar/Learn-LangGraph/blob/master/langgraph/2-state-data-management/15-rollback.ipynb" target="_blank"
+   class="btn btn-sm dropdown-item"
+   title="Launch onColab"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  
+    <img src="../../_static/images/logo_colab.png">
+  </span>
+<span class="btn__text-container">Colab</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/svgoudar/Learn-LangGraph" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/svgoudar/Learn-LangGraph/issues/new?title=Issue%20on%20page%20%2Flanggraph/2-state-data-management/15-rollback.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../../_sources/langgraph/2-state-data-management/15-rollback.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Rollback in LangGraph</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-rollback-is-necessary"><strong>1. Why Rollback Is Necessary</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conceptual-model"><strong>2. Conceptual Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#components-that-enable-rollback"><strong>3. Components That Enable Rollback</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-rollback-works-internally"><strong>4. How Rollback Works Internally</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enabling-checkpointing"><strong>5. Enabling Checkpointing</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#triggering-rollback"><strong>6. Triggering Rollback</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manual-rollback-resume"><strong>7. Manual Rollback &amp; Resume</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#human-in-the-loop-rollback"><strong>8. Human-in-the-Loop Rollback</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production-use-cases"><strong>9. Production Use Cases</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-guarantees"><strong>10. Safety Guarantees</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-traditional-systems"><strong>11. Comparison With Traditional Systems</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model"><strong>12. Mental Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration">Demonstration</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#rollback-in-langgraph" id="id1"><strong>Rollback in LangGraph</strong></a></p>
+<ul>
+<li><p><a class="reference internal" href="#why-rollback-is-necessary" id="id2"><strong>1. Why Rollback Is Necessary</strong></a></p></li>
+<li><p><a class="reference internal" href="#conceptual-model" id="id3"><strong>2. Conceptual Model</strong></a></p></li>
+<li><p><a class="reference internal" href="#components-that-enable-rollback" id="id4"><strong>3. Components That Enable Rollback</strong></a></p></li>
+<li><p><a class="reference internal" href="#how-rollback-works-internally" id="id5"><strong>4. How Rollback Works Internally</strong></a></p></li>
+<li><p><a class="reference internal" href="#enabling-checkpointing" id="id6"><strong>5. Enabling Checkpointing</strong></a></p></li>
+<li><p><a class="reference internal" href="#triggering-rollback" id="id7"><strong>6. Triggering Rollback</strong></a></p></li>
+<li><p><a class="reference internal" href="#manual-rollback-resume" id="id8"><strong>7. Manual Rollback &amp; Resume</strong></a></p></li>
+<li><p><a class="reference internal" href="#human-in-the-loop-rollback" id="id9"><strong>8. Human-in-the-Loop Rollback</strong></a></p></li>
+<li><p><a class="reference internal" href="#production-use-cases" id="id10"><strong>9. Production Use Cases</strong></a></p></li>
+<li><p><a class="reference internal" href="#safety-guarantees" id="id11"><strong>10. Safety Guarantees</strong></a></p></li>
+<li><p><a class="reference internal" href="#comparison-with-traditional-systems" id="id12"><strong>11. Comparison With Traditional Systems</strong></a></p></li>
+<li><p><a class="reference internal" href="#mental-model" id="id13"><strong>12. Mental Model</strong></a></p></li>
+<li><p><a class="reference internal" href="#demonstration" id="id14">Demonstration</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="rollback-in-langgraph">
+<h1><a class="toc-backref" href="#id1"><strong>Rollback in LangGraph</strong></a><a class="headerlink" href="#rollback-in-langgraph" title="Permalink to this heading">#</a></h1>
+<p><strong>Rollback</strong> in LangGraph is the ability to <strong>revert a running or completed graph execution to a previous consistent state</strong> and resume execution from that point.
+It is a core reliability mechanism for building <strong>fault-tolerant, human-supervised, production-grade LLM systems</strong>.</p>
+<hr class="docutils" />
+<section id="why-rollback-is-necessary">
+<h2><a class="toc-backref" href="#id2"><strong>1. Why Rollback Is Necessary</strong></a><a class="headerlink" href="#why-rollback-is-necessary" title="Permalink to this heading">#</a></h2>
+<p>LLM workflows are <strong>non-deterministic</strong> and operate over long, multi-step processes.
+Failures occur due to:</p>
+<ul class="simple">
+<li><p>model hallucinations</p></li>
+<li><p>tool failures</p></li>
+<li><p>invalid state updates</p></li>
+<li><p>policy violations</p></li>
+<li><p>human corrections</p></li>
+</ul>
+<p>Without rollback, the entire run must be discarded.
+With rollback, the system becomes <strong>recoverable and controllable</strong>.</p>
+</section>
+<hr class="docutils" />
+<section id="conceptual-model">
+<h2><a class="toc-backref" href="#id3"><strong>2. Conceptual Model</strong></a><a class="headerlink" href="#conceptual-model" title="Permalink to this heading">#</a></h2>
+<p>LangGraph treats execution as a sequence of <strong>state transitions</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>S₀ → S₁ → S₂ → S₃ → S₄ → ...
+</pre></div>
+</div>
+<p>Each <code class="docutils literal notranslate"><span class="pre">Sᵢ</span></code> is a <strong>checkpointed state snapshot</strong>.</p>
+<p><strong>Rollback = revert to any previous Sᵢ and continue execution</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>S₀ → S₁ → S₂ → S₃ → S₄
+            ↑
+         rollback here
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="components-that-enable-rollback">
+<h2><a class="toc-backref" href="#id4"><strong>3. Components That Enable Rollback</strong></a><a class="headerlink" href="#components-that-enable-rollback" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Component</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Checkpoint Store</p></td>
+<td><p>Persists snapshots</p></td>
+</tr>
+<tr class="row-odd"><td><p>State Serializer</p></td>
+<td><p>Saves state consistently</p></td>
+</tr>
+<tr class="row-even"><td><p>Thread ID</p></td>
+<td><p>Identifies execution</p></td>
+</tr>
+<tr class="row-odd"><td><p>Versioned State</p></td>
+<td><p>Enables historical access</p></td>
+</tr>
+<tr class="row-even"><td><p>Execution Engine</p></td>
+<td><p>Replays from snapshot</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="how-rollback-works-internally">
+<h2><a class="toc-backref" href="#id5"><strong>4. How Rollback Works Internally</strong></a><a class="headerlink" href="#how-rollback-works-internally" title="Permalink to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Every node emits a <strong>partial state update</strong></p></li>
+<li><p>Reducer merges update into current state</p></li>
+<li><p>Updated state is <strong>checkpointed</strong></p></li>
+<li><p>If failure occurs:</p>
+<ul class="simple">
+<li><p>last valid snapshot is loaded</p></li>
+<li><p>execution pointer resets</p></li>
+<li><p>graph resumes from the selected node</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="enabling-checkpointing">
+<h2><a class="toc-backref" href="#id6"><strong>5. Enabling Checkpointing</strong></a><a class="headerlink" href="#enabling-checkpointing" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.checkpoint.sqlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">SqliteSaver</span>
+
+<span class="n">checkpointer</span> <span class="o">=</span> <span class="n">SqliteSaver</span><span class="p">(</span><span class="s2">&quot;checkpoints.db&quot;</span><span class="p">)</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">checkpointer</span><span class="o">=</span><span class="n">checkpointer</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="triggering-rollback">
+<h2><a class="toc-backref" href="#id7"><strong>6. Triggering Rollback</strong></a><a class="headerlink" href="#triggering-rollback" title="Permalink to this heading">#</a></h2>
+<p>Rollback happens when:</p>
+<ul class="simple">
+<li><p>a node raises an exception</p></li>
+<li><p>human rejects an intermediate result</p></li>
+<li><p>a policy condition fails</p></li>
+<li><p>retry budget is exceeded</p></li>
+</ul>
+<p>Example with controlled failure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">risky_node</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid state&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>LangGraph automatically rolls back to the last checkpoint.</p>
+</section>
+<hr class="docutils" />
+<section id="manual-rollback-resume">
+<h2><a class="toc-backref" href="#id8"><strong>7. Manual Rollback &amp; Resume</strong></a><a class="headerlink" href="#manual-rollback-resume" title="Permalink to this heading">#</a></h2>
+<p>Using <strong>thread_id</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;configurable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;thread_id&quot;</span><span class="p">:</span> <span class="s2">&quot;session-42&quot;</span><span class="p">}}</span>
+<span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the run crashes, resume later:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>LangGraph reloads the last checkpoint and continues.</p>
+</section>
+<hr class="docutils" />
+<section id="human-in-the-loop-rollback">
+<h2><a class="toc-backref" href="#id9"><strong>8. Human-in-the-Loop Rollback</strong></a><a class="headerlink" href="#human-in-the-loop-rollback" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">review_node</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;approved&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Rejected by human&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span>
+</pre></div>
+</div>
+<p>A rejection automatically triggers rollback.</p>
+</section>
+<hr class="docutils" />
+<section id="production-use-cases">
+<h2><a class="toc-backref" href="#id10"><strong>9. Production Use Cases</strong></a><a class="headerlink" href="#production-use-cases" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Use Case</p></th>
+<th class="head"><p>Why Rollback Matters</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Autonomous agents</p></td>
+<td><p>Recover from bad plans</p></td>
+</tr>
+<tr class="row-odd"><td><p>Compliance systems</p></td>
+<td><p>Undo unsafe decisions</p></td>
+</tr>
+<tr class="row-even"><td><p>Long pipelines</p></td>
+<td><p>Avoid full restarts</p></td>
+</tr>
+<tr class="row-odd"><td><p>Human review</p></td>
+<td><p>Correct mistakes</p></td>
+</tr>
+<tr class="row-even"><td><p>Multi-agent debate</p></td>
+<td><p>Rewind incorrect reasoning</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="safety-guarantees">
+<h2><a class="toc-backref" href="#id11"><strong>10. Safety Guarantees</strong></a><a class="headerlink" href="#safety-guarantees" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Guarantee</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Consistency</p></td>
+<td><p>No corrupted state</p></td>
+</tr>
+<tr class="row-odd"><td><p>Durability</p></td>
+<td><p>Survives crashes</p></td>
+</tr>
+<tr class="row-even"><td><p>Recoverability</p></td>
+<td><p>Resume anytime</p></td>
+</tr>
+<tr class="row-odd"><td><p>Auditability</p></td>
+<td><p>Full execution history</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="comparison-with-traditional-systems">
+<h2><a class="toc-backref" href="#id12"><strong>11. Comparison With Traditional Systems</strong></a><a class="headerlink" href="#comparison-with-traditional-systems" title="Permalink to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="colwidths-auto table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Traditional Pipeline</p></th>
+<th class="head"><p>LangGraph</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>No rollback</p></td>
+<td><p>Full rollback</p></td>
+</tr>
+<tr class="row-odd"><td><p>Crash = lost work</p></td>
+<td><p>Crash = resume</p></td>
+</tr>
+<tr class="row-even"><td><p>Stateless</p></td>
+<td><p>Stateful</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hard to debug</p></td>
+<td><p>Fully traceable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="mental-model">
+<h2><a class="toc-backref" href="#id13"><strong>12. Mental Model</strong></a><a class="headerlink" href="#mental-model" title="Permalink to this heading">#</a></h2>
+<blockquote>
+<div><p><strong>LangGraph execution behaves like a database transaction log.</strong>
+Each step is logged, reversible, and replayable.</p>
+</div></blockquote>
+<p>This is what allows <strong>safe autonomy</strong>.</p>
+</section>
+<section id="demonstration">
+<h2><a class="toc-backref" href="#id14">Demonstration</a><a class="headerlink" href="#demonstration" title="Permalink to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypedDict</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">):</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">int</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">increment</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">risky</span><span class="p">(</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Simulated failure&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">state</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">StateGraph</span><span class="p">,</span> <span class="n">END</span>
+
+<span class="n">builder</span> <span class="o">=</span> <span class="n">StateGraph</span><span class="p">(</span><span class="n">State</span><span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;inc&quot;</span><span class="p">,</span> <span class="n">increment</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;risk&quot;</span><span class="p">,</span> <span class="n">risky</span><span class="p">)</span>
+
+<span class="n">builder</span><span class="o">.</span><span class="n">set_entry_point</span><span class="p">(</span><span class="s2">&quot;inc&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;inc&quot;</span><span class="p">,</span> <span class="s2">&quot;risk&quot;</span><span class="p">)</span>
+<span class="n">builder</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="s2">&quot;risk&quot;</span><span class="p">,</span> <span class="s2">&quot;inc&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;langgraph.graph.state.StateGraph at 0x1ddaff283e0&gt;
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.checkpoint.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemorySaver</span>
+
+<span class="n">checkpointer</span> <span class="o">=</span> <span class="n">InMemorySaver</span><span class="p">()</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">checkpointer</span><span class="o">=</span><span class="n">checkpointer</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;configurable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;thread_id&quot;</span><span class="p">:</span> <span class="s2">&quot;session-1&quot;</span><span class="p">}}</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">graph</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Execution failed. Rolled back.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Execution failed. Rolled back.
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./langgraph\2-state-data-management"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="14-replay.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title"><strong>Replay in LangGraph</strong></p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="16-state-migration.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><strong>State Migration in LangGraph</strong></p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#why-rollback-is-necessary"><strong>1. Why Rollback Is Necessary</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conceptual-model"><strong>2. Conceptual Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#components-that-enable-rollback"><strong>3. Components That Enable Rollback</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#how-rollback-works-internally"><strong>4. How Rollback Works Internally</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#enabling-checkpointing"><strong>5. Enabling Checkpointing</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#triggering-rollback"><strong>6. Triggering Rollback</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manual-rollback-resume"><strong>7. Manual Rollback &amp; Resume</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#human-in-the-loop-rollback"><strong>8. Human-in-the-Loop Rollback</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#production-use-cases"><strong>9. Production Use Cases</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-guarantees"><strong>10. Safety Guarantees</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-with-traditional-systems"><strong>11. Comparison With Traditional Systems</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mental-model"><strong>12. Mental Model</strong></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#demonstration">Demonstration</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By svgoudar
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
