@@ -1,0 +1,1 @@
+python310 -m http.server 8003 -d _build\html
