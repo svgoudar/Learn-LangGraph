@@ -46,6 +46,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-light.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/tooltipster-sideTip-borderless.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/micromodal.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -229,8 +230,8 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/01-local-node-state.html"><strong>Local Node State in LangGraph</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/02-typed-state-schema.html">Typed State Schema</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/03-state-validation.html">State Validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/04-state-reducers.html"><strong>State Reducers in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/05-partial-state-updates.html"><strong>Partial State Updates in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/04-state-reducers.html">State Reducers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/05-partial-state-updates.html">Partial State Updates</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/06-immutable-state-transitions.html">Immutable State Transitions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/07-state-versioning.html"><strong>State Versioning in LangGraph</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../2-state-data-management/08-state-diff.html">State Diff</a></li>
@@ -381,31 +382,31 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../10-performance-scalability/overview.html">Performance &amp; Scalability</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/00-async-execution.html"><strong>Async Execution in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/00-async-execution.html">Async Execution</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/01-parallel-execution.html">Parallel Execution</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/02-concurrency-control.html"><strong>Concurrency Control in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/03-thread-pool.html"><strong>Thread Pool in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/04-worker-pool.html"><strong>Worker Pool in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/05-load-balancing.html"><strong>Load Balancing in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/06-horizontal-scaling.html"><strong>Horizontal Scaling in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/07-vertical-scaling.html"><strong>Vertical Scaling in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/08-throughput-optimization.html"><strong>Throughput Optimization in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/10-memory-optimization.html"><strong>Latency Optimization in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/11-cost-optimization.html"><strong>Cost Optimization in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/12-cold-start-handling.html"><strong>Cold Start Handling in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/13-warm-start.html"><strong>Warm Start in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/02-concurrency-control.html">Concurrency Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/03-thread-pool.html">Thread Pool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/04-worker-pool.html">Worker Pool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/05-load-balancing.html">Load Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/06-horizontal-scaling.html">Horizontal Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/07-vertical-scaling.html">Vertical Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/08-throughput-optimization.html">Throughput Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/10-memory-optimization.html">Latency Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/11-cost-optimization.html">Cost Optimization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/12-cold-start-handling.html">Cold Start Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../10-performance-scalability/13-warm-start.html">Warm Start</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../11-observability-operations/overview.html">Observability &amp; Operations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/00-logging.html"><strong>Logging in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/01-tracing.html"><strong>Tracing in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/02-metrics.html"><strong>Metrics in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/03-monitoring.html"><strong>Monitoring in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/00-logging.html">Logging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/01-tracing.html">Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/02-metrics.html">Metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/03-monitoring.html">Monitoring</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/04-alerting.html">Alerting</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/05-debug-mode.html">Debug Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/06-replay-mode.html">Replay Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/07-visualization.html"><strong>Visualization in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/08-graph-viewer.html"><strong>Graph Viewer in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/07-visualization.html">Visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/08-graph-viewer.html">Graph Viewer</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/09-execution-timeline.html">Execution Timeline</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../11-observability-operations/10-performance-profiling.html">Performance Profiling</a></li>
 </ul>
@@ -414,9 +415,9 @@ const thebe_selector_output = ".output, .cell_output"
 <li class="toctree-l2"><a class="reference internal" href="../12-security-governance/00-authentication.html">Authentication</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../12-security-governance/01-authorization.html">Authorization</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../12-security-governance/02-role-based-access-control.html"><strong>Role-Based Access Control (RBAC) in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/03-secrets-management.html"><strong>Secret Management in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/03-secrets-management.html">Secret Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../12-security-governance/04-data-encryption.html">Data Encryption</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/05-secure-state-storage.html"><strong>Secure State Storage in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../12-security-governance/05-secure-state-storage.html">Secure State Storage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../12-security-governance/06-audit-trails.html">Audit Trails</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../12-security-governance/07-compliance.html">Compliance</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../12-security-governance/08-policy-enforcement.html">Policy Enforcement</a></li>
@@ -425,7 +426,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Deployment &amp; Production Architecture</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="00-local-runtime.html"><strong>Local Runtime in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="00-local-runtime.html">Local Runtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="01-cloud-runtime.html">Cloud Runtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02-distributed-runtime.html">Distributed Runtime</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03-containerization.html">Containerization</a></li>
@@ -442,33 +443,33 @@ const thebe_selector_output = ".output, .cell_output"
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../14-advanced-design-patterns/overview.html">Advanced Design Patterns</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/00-react-loop.html">ReAct Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/01-planner-executor.html"><strong>Planner–Executor Pattern in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/02-reflection-loop.html"><strong>Reflection Loop in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/03-self-correction-loop.html"><strong>Self-Correction Loop in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/04-map-reduce.html"><strong>Map–Reduce in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/05-tree-of-thoughts.html"><strong>Tree of Thought (ToT) in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/06-chain-of-thought-control.html"><strong>Chain of Thought in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/07-debate-consensus.html"><strong>Debate–Consensus Pattern in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/08-multi-step-pipelines.html"><strong>Multi-Step Pipeline in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/09-event-driven-workflow.html"><strong>Event-Driven Workflow in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/01-planner-executor.html">Planner–Executor Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/02-reflection-loop.html">Reflection Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/03-self-correction-loop.html">Self-Correction Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/04-map-reduce.html">Map–Reduce</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/05-tree-of-thoughts.html">Tree of Thought (ToT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/06-chain-of-thought-control.html">Chain of Thought</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/07-debate-consensus.html">Debate–Consensus Pattern</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/08-multi-step-pipelines.html">Multi-Step Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/09-event-driven-workflow.html">Event-Driven Workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/10-self-healing-graph.html">Self-Healing Graph</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/11-autonomous-workflow.html"><strong>Autonomous Workflow in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/11-autonomous-workflow.html">Autonomous Workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../14-advanced-design-patterns/12-swarm-architecture.html"><strong>SWARM Architecture in LangGraph</strong></a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../15-developer-experience/overview.html">Developer Experience</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/00-graph-builder.html">Graph Builder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/01-visual-editor.html"><strong>Visual Editor in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/01-visual-editor.html">Visual Editor</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/02-dsl.html"><strong>Domain-Specific Language (DSL) in LangGraph</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/03-configuration-management.html">Configuration Management</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/04-environment-config.html"><strong>Environment Configuration in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/05-hot-reload.html"><strong>Hot Reload in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/05-hot-reload.html">Hot Reload</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/06-testing-framework.html"><strong>Testing Framework in LangGraph</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/07-unit-tests.html">Unit Testing</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/08-integration-tests.html">Integration Testing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/09-simulation.html"><strong>Simulation in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/10-mocking.html"><strong>Mocking in LangGraph</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/11-staging-environment.html"><strong>Staging Environment in LangGraph</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/09-simulation.html">Simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/10-mocking.html">Mocking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../15-developer-experience/11-staging-environment.html">Staging Environment</a></li>
 </ul>
 </details></li>
 </ul>
